@@ -1,0 +1,12 @@
+page-accueil {
+    .img-container{
+        display: flex;
+        justify-content: center
+    }
+    img{
+        max-height:33vh
+    }
+    p{
+        text-align:center
+    }
+}

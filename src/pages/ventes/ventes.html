@@ -1,0 +1,42 @@
+<!--
+  Generated template for the Ventes page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+
+<ion-header>
+  <ion-navbar>
+    <!--button ion-button menuToggle><ion-icon name="options" ></ion-icon></button-->
+    <ion-title>ventes</ion-title>
+    <ion-buttons end>
+      <button ion-button menuToggle><ion-icon name="options" ></ion-icon></button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let vente of listVentes" (click)="detail(vente, boutique_id)" >
+      <!--ion-row>
+        <ion-col-->
+          
+           <h3><strong>Client:</strong> {{vente.nom_client}}</h3>
+           <h3><strong>Produit:</strong> {{vente.nom_produit}}</h3>
+        <!--/ion-col>
+        <ion-col class="aligneDate"-->
+          <p><strong>Date:</strong> {{vente.date_vente | date: 'dd-MM-yyyy'}}</p>
+        <!--/ion-col>
+      </ion-row-->
+    </ion-item>
+
+    <ion-item *ngIf="!listVentes.length > 0">
+      <p>La liste est vide !</p>
+    </ion-item>    
+  </ion-list>
+
+  <ion-fab bottom right>
+    <button ion-fab mini (click)="ajouter(last_id, produits, boutique_id)" ><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
+</ion-content>

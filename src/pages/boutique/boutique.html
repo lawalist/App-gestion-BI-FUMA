@@ -1,0 +1,69 @@
+<!--
+  Generated template for the Boutique page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="fuma_primary">
+    <ion-title>détail boutique</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <h2>Information boutique  </h2>
+  <div *ngIf="boutique_id">
+    <p><strong>ID boutique: </strong> {{boutique._id}} </p>
+    <p><strong>Type boutique: </strong> {{boutique.type}} </p>
+    <p><strong>Nom boutique: </strong> {{boutique.nom}} </p>
+    <p><strong>Région: </strong> {{boutique.region}} </p>
+    <p><strong>Departement: </strong> {{boutique.departement}} </p>
+    <p><strong>Commune: </strong> {{boutique.commune}} </p>
+    <p><strong>Village: </strong> {{boutique.village}} </p>
+    <p><strong>Longitude: </strong> {{boutique.longitude}} </p>
+    <p><strong>Latitude: </strong> {{boutique.latitude}} </p>
+    <div *ngIf="gerant">
+      <p><strong>Nom gérant: </strong> {{gerant.nom}} </p>
+      <!--p> <strong>Prénom gérant: </strong> {{gerant.prenom}} </p-->
+    </div>
+    <div *ngIf="!gerant" >
+      <p class="error-box"> <strong>Pas de gérant en fonction!</strong></p>
+    </div>
+    <p><strong>Nom de l'OP: </strong> {{boutique.nom_op}} </p>
+    <p><strong>Nom de l'Union: </strong> {{boutique.nom_union}} </p>
+    <p><strong>Nom de la fédération: </strong> {{boutique.nom_federation}} </p>
+    <p><strong>nombre du membre de l'OP: </strong> {{boutique.nb_membre_op_proprietaire}} </p>
+    <p><strong>Nombre de femmes: </strong> {{boutique.nb_femme}} </p>
+    <p><strong>Date création: </strong> {{boutique.date_creation | date: 'dd-MM-yyyy'}} </p>
+    <p><strong>Solde caisse: </strong> {{boutique.solde_caisse}}F</p>
+    <p><strong>Solde trésor: </strong> {{boutique.solde_tresor}}F</p>
+    <p><strong>Status: </strong> {{boutique.status}} </p>
+
+    <ion-row>
+      <ion-col>
+        <ion-card (click)="gestionGerants()">
+          <ion-item style="text-align: center">Gérants
+          </ion-item>
+        </ion-card>
+        <ion-card (click)="gestionProduits()">
+          <ion-item style="text-align: center">Produits
+          </ion-item>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <ion-fab bottom right *ngIf="boutique_id">
+    <button ion-fab mini (click)="modifier(boutique)"><ion-icon name="create"></ion-icon></button>
+  </ion-fab>
+
+  <div *ngIf="!boutique_id">
+    <div class="message">La boutique n'est pas défini</div>
+    <ion-fab bottom right >
+      <button ion-fab mini (click)="ajouter()" *ngIf="!boutique_id"><ion-icon name="add"></ion-icon></button>
+    </ion-fab>
+  </div>
+</ion-content>

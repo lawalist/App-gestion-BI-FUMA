@@ -1,0 +1,59 @@
+<!--
+  Generated template for the Operations page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+
+<ion-header>
+  <ion-navbar color="fuma_primary">
+    <!--button ion-button menuToggle><ion-icon name="options" ></ion-icon></button-->
+    <ion-title>opérations</ion-title>
+    <!--ion-buttons end>
+      <button ion-button menuToggle><ion-icon name="options" ></ion-icon></button>
+    </ion-buttons-->
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-label floating>Type opération</ion-label>
+      <ion-select [(ngModel)] = "selectedTypeOperation" (ionChange)="filterTypeOperation()" cancelText="Annuler" okText="Ok" >
+        <ion-option value="VENTE">VENTE</ion-option>
+        <ion-option value="DEPENSE">DEPENSE</ion-option>
+        <ion-option value="DECAISSEMENT">DECAISSEMENT</ion-option>
+        <ion-option value="LOCATION" >LOCATION</ion-option>
+        <ion-option value="RETOUR LOCATION">RETOUR LOCATION</ion-option>
+        <ion-option value="SUBVENTION">SUBVENTION</ion-option>
+        <ion-option value="TOUS">TOUS</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-searchbar placeholder="Recherche produit" [showCancelButton]="shouldShowCancel" (ionInput)="getItems($event)"></ion-searchbar>
+    </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-item *ngFor="let operation of operations" (click)="detail(operation, boutique_id)" >
+      <!--ion-row>
+        <ion-col-->
+          
+           <h3><strong>Client:</strong> {{operation.nom_client}}</h3>
+           <h3><strong>Produit:</strong> {{operation.nom_produit}}</h3>
+        <!--/ion-col>
+        <ion-col class="aligneDate"-->
+          <p><strong>Date:</strong> {{operation.date | date: 'dd-MM-yyyy'}}</p>
+        <!--/ion-col>
+      </ion-row-->
+    </ion-item>
+
+    <ion-item *ngIf="!operations.length > 0">
+      <div class="message">La liste est vide !</div>
+    </ion-item>    
+  </ion-list>
+
+  <ion-fab bottom right>
+    <button ion-fab mini (click)="ajouter(last_id, produits, boutique_id)" ><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
+</ion-content>

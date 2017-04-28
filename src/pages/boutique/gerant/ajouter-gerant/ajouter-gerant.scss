@@ -1,0 +1,19 @@
+page-ajouter-gerant {
+     .error-box {
+        color: red;
+    }
+     
+    .error-border {
+        color: red;
+    }
+
+    .img-container{
+        display: flex;
+        justify-content: center
+    }
+    img{
+        max-height:33vh;
+        //max-width: 100%
+        
+    }
+}

@@ -1,0 +1,34 @@
+<!--
+  Generated template for the Produit page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="fuma_primary">
+    <ion-title>produit</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <!--h2>Liste des produits</h2-->
+  <ion-list>
+    <ion-item *ngFor="let produit of produits" (click)="detail(produit, boutique_id)" >
+      <p>Type: {{produit.type_produit}} </p>
+      <p>Nom: {{produit.nom_produit}} </p>
+      <p>Quantité: {{produit.quantite}}</p>
+      <p>Prix unitaire: {{produit.prix}}</p>
+    </ion-item>
+
+    <ion-item *ngIf="!produits.length > 0">
+      <div class="message">La liste est vide !</div>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab bottom right>
+    <button ion-fab mini (click)="ajouter(last_id, boutique_id, typeProduits)"><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
+</ion-content>

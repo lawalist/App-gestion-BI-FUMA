@@ -1,0 +1,135 @@
+<!--
+  Generated template for the Achates page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>achats</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let achat of listAchats" (click)="detail(achat, boutique_id)">
+      <!--ion-row>
+        <ion-col-->
+           <h3><strong>Vendeur:</strong> {{achat.nom_vendeur}} - {{achat.prenom_vendeur}}</h3>
+           <h3><strong>Produit:</strong> {{achat.produit.nom_produit}}</h3>
+        <!--/ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="aligneDate"-->
+           <p><strong>Date:</strong>{{achat.date_vente | date: 'dd-MM-yyyy'}}</p>
+        <!--/ion-col>
+      </ion-row-->
+    </ion-item>
+
+    <ion-item *ngIf="!listAchats.length > 0">
+      <p>La liste est vide !</p>
+    </ion-item>
+  </ion-list>
+
+    <ion-scroll scrollX="true" scrollY="true" style="height: 50%">
+    <ion-grid border>
+      <ion-row>
+        <ion-col width-50>
+          <strong>Type opération</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Type de produit</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Nom de produit</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>unité</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Prix unitaire</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Quantité</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>montant_total</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Caisse</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Tresorier</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Nom du Client</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Sexe</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Village</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>OP</strong>
+        </ion-col>
+        <ion-col width-50>
+          <strong>Obsertion</strong>
+        </ion-col>
+      </ion-row>
+      <hr style="border: 10">
+      <ion-row *ngFor="let op of operations" >
+        <ion-col width-50 wrap>
+          {{op.type}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.type_produit}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.nom_produit}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.unite}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.prix_unitaire}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.quantite}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.montant_total}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.solde_caisse}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.solde_tresor}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.nom_client}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.sex_client}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.village_client}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.op_client}}
+        </ion-col>
+        <ion-col width-50>
+          {{op.observation}}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-scroll>
+
+
+  <ion-fab bottom right>
+    <button ion-fab mini (click)="ajouter(last_id, produits)"><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
+</ion-content>

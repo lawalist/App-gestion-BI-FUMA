@@ -1,0 +1,102 @@
+<!--
+  Generated template for the DetailOperation page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="fuma_primary">
+    <ion-title>detail-opération</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <h4 style="text-align: center; color: seagreen">
+    Détail opération numéro: {{operation.id}}
+  </h4>
+  <ion-card>
+    <ion-card-header>
+      <strong>Informations opération</strong>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item-sliding>
+          <ion-item>
+            <h2><strong>Type opération:</strong> {{operation.type}} </h2>
+            <h2><strong>Date:</strong> {{operation.date | date: 'dd-MM-yyyy'}}</h2>
+            <h2><strong>Type produit:</strong> {{operation.type_produit}} </h2>
+            <h2><strong>Nom produit:</strong> {{operation.nom_produit}} </h2>
+            <h2><strong>Quantité:</strong> {{operation.quantite}} {{operation.unite}} </h2>
+            <h2><strong>Prix unitaire:</strong> {{operation.prix_unitaire}}F</h2>
+            <h2><strong>Montant total:</strong> {{operation.montant_total}}F</h2>
+            <h2><strong>Solde caisse:</strong> {{operation.solde_caisse}}F</h2>
+            <h2><strong>Solde trésor:</strong> {{operation.solde_tresor}}F</h2>
+            <h2><strong>Observation:</strong> {{operation.observation}}</h2>
+          </ion-item>
+          <ion-item-options side="left">
+            <button ion-button color="primary" (click)="editer(operation)">
+              <ion-icon name="create"></ion-icon>
+              Editer
+            </button>
+          </ion-item-options>
+
+          <ion-item-options side="right">
+            <button ion-button color="danger" (click)="supprimer(operation)">
+              <ion-icon name="trash"></ion-icon>
+              Supprimer
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <strong>Informations client</strong>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item-sliding>
+          <ion-item>
+            <h2><strong>Nom:</strong> {{operation.nom_client}}</h2>
+            <h2><strong>Sex:</strong> {{operation.sex_client}}</h2>
+            <h2><strong>Village:</strong> {{operation.village_client}}</h2>
+            <h2><strong>OP:</strong> {{operation.op_client}}</h2>
+          </ion-item>
+          <ion-item-options side="left">
+            <button ion-button color="primary" (click)="editer(operation)">
+              <ion-icon name="create"></ion-icon>
+              Editer
+            </button>
+          </ion-item-options>
+
+          <ion-item-options side="right">
+            <button ion-button color="danger" (click)="supprimer(operation)">
+              <ion-icon name="trash"></ion-icon>
+              Supprimer
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <strong>Informations gérant</strong>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <h2><strong>Matricule:</strong> {{operation.matricule_gerant}}</h2>
+          <h2><strong>nom:</strong> {{operation.nom_gerant}}</h2>
+          <!--h2><strong>prenom:</strong> {{operation.prenom_gerant}}</h2-->
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

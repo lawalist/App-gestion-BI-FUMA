@@ -1,0 +1,75 @@
+<!--
+  Generated template for the AjouterProduit page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="fuma_primary">
+    <ion-title>ajouter-produit</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <form [formGroup]="produit" (ngSubmit) = "ajouter()">
+
+  <ion-item>
+      <ion-label floating>Type produit <span class="error-box">*</span></ion-label>
+      <ion-select formControlName="type_produit" cancelText="Annuler" okText="Ok">
+        <ion-option value="" selected disabled>Selectionnez un type de produit</ion-option>
+        <ion-option *ngFor="let typeProduit of typeProduits" [value]=typeProduit.nom >{{typeProduit.nom}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <div style="padding-left: 15px;" class="error-box" *ngIf="produit.controls['type_produit'].hasError('required') && produit.controls['type_produit'].touched">* Le type de produit est obligatoir!</div>
+
+  <ion-item>
+    <ion-label floating>Nom produit <span class="error-box">*</span></ion-label>
+    <ion-input type="text" formControlName="nom_produit"></ion-input>
+  </ion-item>
+<div style="padding-left: 15px;" class="error-box" *ngIf="produit.controls['nom_produit'].hasError('required') && produit.controls['nom_produit'].touched">* Le nom du produit est obligatoir!</div>
+
+  <ion-item>
+    <ion-label floating>Unité de mesure <span class="error-box">*</span></ion-label>
+    <ion-select formControlName="unite_mesure" [(ngModel)] = "selectedUnite" cancelText="Annuler" okText="Ok">
+      <ion-option value="" selected disabled>Selectionnez une unité</ion-option>
+      <ion-option *ngFor="let unite of unites" [value]=unite>{{unite}}</ion-option>
+      <!--ion-option value="g">g</ion-option>
+      <ion-option value="sachet100g">sachet de 100 grammes</ion-option>
+      <ion-option value="sachet25g">sachet de 25 grammes</ion-option>
+      <ion-option value="bloc100g">bloc de 100 grammes</ion-option>
+      <ion-option value="tia">tia</ion-option>
+      <ion-option value="litre">litre</ion-option>
+      <ion-option value="comprime">comprimé</ion-option>
+      <ion-option value="autre">autre</ion-option-->
+    </ion-select>
+  </ion-item>
+<div style="padding-left: 15px;" class="error-box" *ngIf="produit.controls['unite_mesure'].hasError('required') && produit.controls['unite_mesure'].touched">* L'unité de messure est obligatoir!</div>
+
+  <ion-item>
+    <ion-label *ngIf="selectedUnite" floating>Quantité ({{selectedUnite}}) <span class="error-box">*</span></ion-label>
+    <ion-label *ngIf="!selectedUnite" floating>Quantité <span class="error-box">*</span></ion-label>
+    <ion-input type="number" formControlName="quantite" (keyup)="onKeyupQuantite()"></ion-input>
+  </ion-item>
+<div style="padding-left: 15px;" class="error-box" *ngIf="produit.controls['quantite'].hasError('required') && produit.controls['quantite'].touched">* La quantité est obligatoir!</div>
+
+  <ion-item>
+    <ion-label floating>Prix unitaire (FCFA) <span class="error-box">*</span></ion-label>
+    <ion-input type="number" formControlName="prix" (keyup)="onKeyupPrixUnitaire()"></ion-input>
+  </ion-item>
+<div style="padding-left: 15px;" class="error-box" *ngIf="produit.controls['prix'].hasError('required') && produit.controls['prix'].touched">* Le prix unitaire est obligatoir!</div>
+
+  <ion-item>
+    <ion-label floating>Prix total (FCFA) <span class="error-box">*</span></ion-label>
+    <ion-input type="number" formControlName="prix_total" [(ngModel)]="prix_total"></ion-input>
+  </ion-item>
+<div style="padding-left: 15px;" class="error-box" *ngIf="produit.controls['prix_total'].hasError('required') && produit.controls['prix_total'].touched">* Le prix total est obligatoir!</div>
+
+    <br>
+    <button ion-button type="submit" color="secondary" [disabled]="!produit.valid" block>Sauvegarder</button>
+  </form>
+  <button ion-button color="primary" block (click)="annuler()">Annuler</button>
+
+</ion-content>

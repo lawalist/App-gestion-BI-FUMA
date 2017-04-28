@@ -1,0 +1,52 @@
+<!--
+  Generated template for the DetailAchat page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>detail-achat</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-card>
+    <ion-card-header>
+      Détail achat numéro: {{achat.id}}
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item-sliding>
+          <ion-item>
+            <!--h2><strong>ID Boutique:</strong> {{achat.boutique_id}}</h2-->
+            <h2><strong>Nom vendeur:</strong> {{achat.nom_vendeur}}</h2>
+            <h2><strong>Prénom vendeur:</strong> {{achat.prenom_vendeur}}</h2>
+            <!--h2><strong>Type produit:</strong> {{achat.type_produit}} </h2-->
+            <h2><strong>Produit acheté:</strong> {{achat.produit.nom_produit}} </h2>
+            <h2><strong>Quantité:</strong> {{achat.quantite}} Kg</h2>
+            <h2><strong>Prix:</strong> {{achat.prix}} FCFA</h2>
+            <h2><strong>Date:</strong> {{achat.date_vente | date: 'dd-MM-yyyy'}}</h2>
+          </ion-item>
+          <ion-item-options side="left">
+            <button ion-button color="primary" (click)="editer(achat)">
+              <ion-icon name="create"></ion-icon>
+              Editer
+            </button>
+          </ion-item-options>
+
+          <ion-item-options side="right">
+            <button ion-button color="danger" (click)="supprimer(achat, boutique_id)">
+              <ion-icon name="trash"></ion-icon>
+              Supprimer
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+    </ion-card-content>
+
+  </ion-card>
+</ion-content>

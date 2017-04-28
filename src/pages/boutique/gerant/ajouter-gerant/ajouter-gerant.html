@@ -1,0 +1,83 @@
+<!--
+  Generated template for the Ajoutergerant page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="fuma_primary">
+    <ion-title>ajouter-gerant</ion-title>
+
+    <ion-buttons end>
+      <button royal (click)="openCamera()">
+        <ion-icon name="camera"></ion-icon>
+      </button>
+
+      <button royal (click)="chooseImage()">
+        <ion-icon name="image"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div class="img-container">
+    <img src="{{path}}" *ngIf="path" >
+  </div>
+  <form [formGroup]="gerant" (ngSubmit) = "ajouter()">
+
+  <ion-item>
+    <ion-label floating>Matricule gérant <span class="error-box">*</span></ion-label>
+    <ion-input type="text" formControlName="id" [(ngModel)]="matricule" ></ion-input>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label floating>Nom gérant <span class="error-box">*</span></ion-label>
+    <ion-input type="text" formControlName="nom" (keyup)="keyupNom()"></ion-input>
+  </ion-item>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="gerant.controls['nom'].hasError('required') && gerant.controls['nom'].touched">* Le nom du gérant est obligatoir!</div>
+
+
+  <!--ion-item>
+    <ion-label floating>Prénom gérant <span class="error-box">*</span></ion-label>
+    <ion-input type="text" formControlName="prenom" (keyup)="keyupPrenom()"></ion-input>
+  </ion-item>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="gerant.controls['prenom'].hasError('required') && gerant.controls['prenom'].touched">* Le prénom du gérant est obligatoir!</div-->
+
+  <ion-item>
+      <ion-label floating>Date début fonction <span class="error-box">*</span></ion-label>
+      <ion-datetime displayFormat="DD/MM/YYYY" formControlName="date_debut_fonction" cancelText="Annuler" doneText="Valider"></ion-datetime>
+  </ion-item>
+
+  <ion-item>
+    <ion-label floating>Status gérant <span class="error-box">*</span></ion-label>
+    <ion-select formControlName="status" [(ngModel)] = "selectedStatus" (ionChange)="onChange()" cancelText="Annuler" okText="Ok">
+      <ion-option value="" selected disabled>Selectionnez un status</ion-option>
+      <ion-option *ngFor="let stat of status" [value]=stat>{{stat}}</ion-option>
+    </ion-select>
+  </ion-item>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="gerant.controls['status'].hasError('required') && gerant.controls['status'].touched">* Le status est obligatoir!</div>
+
+  <ion-item>
+      <ion-label floating>Date fin fonction</ion-label>
+      <ion-datetime displayFormat="DD/MM/YYYY" formControlName="date_fin_fonction" cancelText="Annuler" doneText="Valider"></ion-datetime>
+  </ion-item>
+
+  <ion-item>
+    <ion-label floating>Raison</ion-label>
+    <ion-textarea formControlName="raison"></ion-textarea>
+  </ion-item>
+
+    <br>
+    <button ion-button type="submit" color="secondary" [disabled]="!gerant.valid" block>Sauvegarder</button>
+  </form>
+  <button ion-button color="primary" block (click)="annuler()">Annuler</button>
+
+  <ion-fab bottom right>
+    <button ion-fab mini (click)="getPosition()"><ion-icon name="cloud-upload"></ion-icon></button>
+  </ion-fab>
+
+</ion-content>
