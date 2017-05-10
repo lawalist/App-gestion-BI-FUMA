@@ -88,12 +88,14 @@ export class AjouterBoutiquePage {
 
   ajouter(){
     let boutiq = this.boutique.value;
-    boutiq.gerants = [];
+    //boutiq._id = 'B:'+ boutiq._id;
+    //boutiq.gerants = [];
     boutiq.type_produits = [];
+    boutiq.unites = [];
     boutiq.operations = [];
-    boutiq.produits = [];
-    boutiq.ventes = [];
-    boutiq.achats = [];
+    //boutiq.produits = [];
+    //boutiq.ventes = [];
+    //boutiq.achats = [];
     this.gestionService.createBoutique(boutiq);
     this.storage.set('boutique_id', boutiq._id);
     let toast = this.toastCtl.create({

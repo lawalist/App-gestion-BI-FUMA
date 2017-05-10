@@ -27,7 +27,7 @@ export class BoutiquePage {
     
   }
 
-  ionViewDidEnter(){
+  ionViewWillEnter(){
     this.storage.get('boutique_id').then((id) => {
       this.boutique_id = id;
       if(id){

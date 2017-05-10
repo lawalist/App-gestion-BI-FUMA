@@ -29,6 +29,52 @@ export class AdminPage {
     //console.log('ionViewDidLoad AdminPage');
   }
 
+    ipServeur(){
+      this.storage.get('ip_serveur').then((ip) => {
+      if(!ip){
+        this.storage.set('ip_serveur', '127.0.0.1');
+      }else{
+        let alert = this.alertCtl.create({
+        title: 'Adresse IP du serveur',
+        //cssClass: 'error',
+        inputs: [
+          {
+            type: 'text',
+            placeholder: 'IP serveur',
+            name: 'ip_serveur',
+            value: ip
+          }
+        ],
+        buttons: [
+          {
+            //cssClass: 'error-border',
+            text: 'Annuler',
+            role: 'Cancel',
+            handler: () => console.log('Changement ip serveur annuler')
+          },
+          {
+            text: 'Valider',
+            handler: data => {
+              this.storage.set('ip_serveur', data.ip_serveur);
+              global.ip_serveur = data.ip_serveur;
+              this.gestionService.doSync();
+                let toast = this.toastCtl.create({
+                  message: 'IP mise à jour avec succes...',
+                  duration: 3000,
+                  position: 'top'
+                });
+                toast.present();
+              
+            }
+          }
+        ]
+      });
+
+      alert.present();
+        }
+      });
+  }
+
   detailBoutique(){
     this.navCtrl.push(BoutiquePage);
   }

@@ -31,8 +31,10 @@
 
   <ion-item>
     <ion-label floating>Matricule gérant <span class="error-box">*</span></ion-label>
-    <ion-input type="text" formControlName="id" [(ngModel)]="matricule" ></ion-input>
+    <ion-input type="text" formControlName="_id" [(ngModel)]="matricule" ></ion-input>
   </ion-item>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="gerant.controls['_id'].hasError('required') && gerant.controls['_id'].touched">* Le matricule du gérant est obligatoir!</div>
+
   
   <ion-item>
     <ion-label floating>Nom gérant <span class="error-box">*</span></ion-label>

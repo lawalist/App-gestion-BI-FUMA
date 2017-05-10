@@ -5,6 +5,8 @@ import { GestionBoutique } from '../../providers/gestion-boutique';
 import { DetailOperationPage } from './detail-operation/detail-operation';
 import { Storage } from '@ionic/storage';
 import { AccueilPage } from '../accueil/accueil'
+import { LoginPage } from '../login/login';
+import { RegisterPage } from '../register/register';
 
 /*
   Generated class for the Ventes page.
@@ -116,7 +118,11 @@ export class OperationsPage {
     });
   }
 
-
+test(){
+  //this.gestionService.login('sani', 'sani');
+  this.navCtrl.push(LoginPage)
+  
+}
   
   ajouter(last_id, produits, boutique_id){
     //let modal = this.modalCtl.create(AjouterVentePage, {'last_id': last_id, 'produits': produits});

@@ -19,6 +19,7 @@ export class ModifierGerantPage {
   gerant: any;
   anciengerant: any;
   gerants: any = [] ;
+  gerant_id :any = '';
   selectedStatus: any = '';
   status: any = [];
   index: any;
@@ -26,11 +27,13 @@ export class ModifierGerantPage {
  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtl: AlertController, public formBuilder: FormBuilder, public storage: Storage, public toastCtl: ToastController, public gestionService: GestionBoutique) {
     this.anciengerant = this.navParams.get('gerant');
     this.selectedStatus = this.anciengerant.status;
+    this.gerant_id = this.anciengerant._id;
   
     this.status = ['En fonction', 'Abandon'];
 
     this.gerant = this.formBuilder.group({
-      id: [this.anciengerant.id],
+      _id: [this.anciengerant._id, Validators.required],
+      _rev: [this.anciengerant._rev],
       nom: [this.anciengerant.nom, Validators.required],
       //prenom: [this.anciengerant.prenom, Validators.required],
       status: [this.anciengerant.status, Validators.required],
@@ -42,23 +45,23 @@ export class ModifierGerantPage {
   }
 
   ionViewDidLoad() {
-    this.storage.get('boutique_id').then((id) => {
-       this.gestionService.getBoutiqueById(id).then((data) => {
-         this.gerants = data.gerants;
+    /*this.storage.get('boutique_id').then((bID) => {
+       this.gestionService.getPlageDocs(bID + ':gerant', bID + 'gerant:\ufff0').then((data) => {
+         this.gerants = data;
        });
-    });
+    });*/
   }
 
   ionViewWillEnter(){
-    this.storage.get('boutique_id').then((id) => {
-       this.gestionService.getBoutiqueById(id).then((data) => {
-         this.gerants = data.gerants;
+    /*this.storage.get('boutique_id').then((bID) => {
+       this.gestionService.getPlageDocs(bID + ':gerant', bID + 'gerant:\ufff0').then((data) => {
+         this.gerants = data;
        });
-    });
+    });*/
   }
   
   onChange(){
-    this.verifierStatusEnFonction();
+    //this.verifierStatusEnFonction();
   }
 
   verifierStatusEnFonction(){
@@ -88,8 +91,8 @@ export class ModifierGerantPage {
   modifier(gerant){
 
     let boutique: any = {} ;
-    let gerants: any = [] ;
-    this.storage.get('boutique_id').then((id) => {
+    //let gerants: any = [] ;
+   /* this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          boutique = data;
          gerants = data.gerants;
@@ -108,8 +111,10 @@ export class ModifierGerantPage {
           this.gestionService.updateBoutique(boutique);
         //}
        });
-    });
-   
+    });*/
+
+    let nouveaugerant = this.gerant.value;
+    this.gestionService.updateDoc(nouveaugerant);
     let toast = this.toastCtl.create({
       message: 'Modification sauvegardée...',
       duration: 3000,

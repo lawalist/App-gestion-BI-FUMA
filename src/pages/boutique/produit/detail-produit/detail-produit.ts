@@ -27,7 +27,7 @@ export class DetailProduitPage {
   }
 
   ionViewDidEnter(){
-    this.gestionService.getBoutiqueById(this.boutique_id).then((res) => {
+    /*this.gestionService.getBoutiqueById(this.boutique_id).then((res) => {
       let v = res.produits;
       this.typeProduits = res.type_produit;
       v.forEach((prod, index) => {
@@ -35,18 +35,19 @@ export class DetailProduitPage {
           this.produit = prod;
         }
       });
-    });
+    });*/
   }
 
   ionViewWillEnter(){
-    this.gestionService.getBoutiqueById(this.boutique_id).then((res) => {
-      let v = res.produits;
+    this.gestionService.getDocById(this.produit._id).then((res) => {
+      this.produit = res;
+      /*let v = res.produits;
       this.typeProduits = res.type_produit;
       v.forEach((prod, index) => {
         if(prod.id === this.produit.id){
           this.produit = prod;
         }
-      });
+      });*/
     });
   }
 
@@ -71,7 +72,7 @@ export class DetailProduitPage {
         {
           text: 'Confirmer',
           handler: () => {
-            this.gestionService.getBoutiqueById(this.boutique_id).then((result) => {
+            /*this.gestionService.getBoutiqueById(this.boutique_id).then((result) => {
               let boutique = result;
               let produits = result.produits;
               produits.forEach((prod, index) =>{
@@ -82,7 +83,8 @@ export class DetailProduitPage {
 
               boutique.produits = produits;
               this.gestionService.updateBoutique(boutique);
-            })
+            })*/
+            this.gestionService.deleteDoc(produit);
             this.navCtrl.pop();
           }
         }

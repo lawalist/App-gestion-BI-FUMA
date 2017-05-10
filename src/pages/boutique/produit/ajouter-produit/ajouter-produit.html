@@ -17,6 +17,12 @@
   <form [formGroup]="produit" (ngSubmit) = "ajouter()">
 
   <ion-item>
+    <ion-label floating>ID produit <span class="error-box">*</span></ion-label>
+    <ion-input type="text" formControlName="_id"></ion-input>
+  </ion-item>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="produit.controls['_id'].hasError('required') && produit.controls['_id'].touched">* L'ID du produit est obligatoir!</div>
+
+  <ion-item>
       <ion-label floating>Type produit <span class="error-box">*</span></ion-label>
       <ion-select formControlName="type_produit" cancelText="Annuler" okText="Ok">
         <ion-option value="" selected disabled>Selectionnez un type de produit</ion-option>

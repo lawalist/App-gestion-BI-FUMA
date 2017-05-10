@@ -28,14 +28,15 @@ export class DetailGerantPage {
     console.log('ionViewDidLoad DetailgerantPage');
   }
 
-  ionViewDidEnter(){
-    this.gestionService.getBoutiqueById(this.boutique_id).then((res) => {
-      let v = res.gerants;
+  ionViewWillEnter(){
+    this.gestionService.getDocById(this.gerant._id).then((gerant) => {
+      this.gerant = gerant;
+      /*let v = res;
       v.forEach((prop, index) => {
-        if(prop.id === this.gerant.id){
+        if(prop._id === this.gerant._id){
           this.gerant = prop;
         }
-      });
+      });*/
     });
   }
 
@@ -55,7 +56,7 @@ export class DetailGerantPage {
         {
           text: 'Confirmer',
           handler: () => {
-            this.gestionService.getBoutiqueById(this.boutique_id).then((result) => {
+            /*this.gestionService.getBoutiqueById(this.boutique_id).then((result) => {
               let boutique = result;
               let gerants = result.gerants;
               gerants.forEach((prop, index) =>{
@@ -66,7 +67,9 @@ export class DetailGerantPage {
 
               boutique.gerants = gerants;
               this.gestionService.updateBoutique(boutique);
-            })
+            })*/
+
+            this.gestionService.deleteDoc(gerant);
             this.navCtrl.pop();
           }
         }

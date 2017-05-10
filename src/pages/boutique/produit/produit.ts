@@ -26,14 +26,14 @@ export class ProduitPage {
 
   ionViewWillEnter(){
     this.storage.get('boutique_id').then((id) => {
-       this.gestionService.getBoutiqueById(id).then((data) => {
+       this.gestionService.getPlageDocs(id + ':produit', id+ ':produit:\ufff0').then((produits) => {
 
-         if(data.produits.length > 0){
-            this.last_id = data.produits[data.produits.length - 1].id;
+         if(produits.length > 0){
+            this.last_id = produits[produits.length - 1].id;
          }
 
-         this.produits = data.produits.reverse();
-         this.typeProduits = data.type_produits;
+         this.produits = produits.reverse();
+         //this.typeProduits = data.type_produits;
          this.boutique_id = id;
 
          this.last_id++;
@@ -42,23 +42,23 @@ export class ProduitPage {
     });
   }
 
-   ionViewDidEnter(){
+  /* ionViewDidEnter(){
     this.storage.get('boutique_id').then((id) => {
-       this.gestionService.getBoutiqueById(id).then((data) => {
+       this.gestionService.getPlageDocs(id + ':produit', id+ ':produit:\ufff0').then((produits) => {
 
-         if(data.produits.length > 0){
-            this.last_id = data.produits[data.produits.length - 1].id;
+         if(produits.length > 0){
+            this.last_id = produits[produits.length - 1].id;
          }
          
-         this.produits = data.produits.reverse();
-         this.typeProduits = data.type_produits;
+         this.produits = produits.reverse();
+         //this.typeProduits = data.type_produits;
          this.boutique_id = id;
 
          this.last_id++;
 
        });
     });
-  }
+  }*/
 
   /*ionViewDidLoad() {
     //let boutiques: any;
@@ -76,8 +76,8 @@ export class ProduitPage {
     });
   }*/
 
-  ajouter(last_id, boutique_id, typeProduits){
-    if(boutique_id && typeProduits.length > 0){
+  ajouter(last_id, boutique_id/*, typeProduits*/){
+    if(boutique_id /*&& typeProduits.length > 0*/){
       this.navCtrl.push(AjouterProduitPage, {'last_id': last_id, 'boutique_id': boutique_id} );
     }else{
       let alert = this.alertCtl.create({

@@ -44,7 +44,8 @@ export class ModifierProduitPage {
 
 
     this.produit = this.formBuilder.group({
-      id: [this.ancienProduit.id],
+      _id: [this.ancienProduit._id],
+      _rev: [this.ancienProduit._rev],
       type_produit: [this.ancienProduit.type_produit, Validators.required],
       nom_produit: [this.ancienProduit.nom_produit, Validators.required],
       quantite: [this.ancienProduit.quantite, Validators.required],
@@ -77,7 +78,7 @@ export class ModifierProduitPage {
 
     let boutique: any = {} ;
     let produits: any = [] ;
-    this.storage.get('boutique_id').then((id) => {
+    /*this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          boutique = data;
          produits = data.produits;
@@ -92,12 +93,12 @@ export class ModifierProduitPage {
           this.gestionService.updateBoutique(boutique);
         //}
        });
-    });
+    });*/
 
 
     //let achat = this.achat.value;
     //this.gestionService.updateAchat(achat);
-   
+    this.gestionService.updateDoc(this.produit.value);
     let toast = this.toastCtl.create({
       message: 'Modification sauvegardée...',
       duration: 3000,

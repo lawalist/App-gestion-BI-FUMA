@@ -26,7 +26,7 @@ export class GerantPage {
   constructor(public gestionService: GestionBoutique, public alertCtl: AlertController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams) {}
 
 
-  /*ionViewWillEnter(){
+  /*ionViewDidEnter(){
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          this.gerants = data.gerants;
@@ -40,14 +40,14 @@ export class GerantPage {
     });
   }*/
 
-   ionViewDidEnter(){
-    this.storage.get('boutique_id').then((id) => {
-       this.gestionService.getBoutiqueById(id).then((data) => {
-         this.gerants = data.gerants;
-         this.allGeranrs = data.gerants;
-         this.boutique_id = id;
-         if(data.gerants.length > 0){
-            this.last_id = data.gerants[data.gerants.length - 1].id;
+   ionViewWillEnter(){
+    this.storage.get('boutique_id').then((bID) => {
+       this.gestionService.getPlageDocs(bID + ':gerant', bID + 'gerant:\ufff0').then((data) => {
+         this.gerants = data;
+         this.allGeranrs = data;
+         this.boutique_id = bID;
+         if(data.length > 0){ 
+            this.last_id = data[0]._id;
             this.last_id = this.last_id.substr(this.last_id.length - 3, this.last_id.length -1);
          }
        });

@@ -4,5 +4,8 @@ export var global = {
     premierLancement: true,
     //changerInfoBoutique: false,
     changerInfoBoutique: true,
-    suivant: false
+    suivant: false,
+    ip_serveur: '127.0.0.1'
+
+    //pages: Array<{title: string, component: any}>
 }

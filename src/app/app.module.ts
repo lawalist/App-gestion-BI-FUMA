@@ -39,6 +39,10 @@ import { ConfigProduitPage } from '../pages/accueil/config-produit/config-produi
 import { ConfigTypeProduitPage } from '../pages/accueil/config-type-produit/config-type-produit';
 import { RapportPage } from '../pages/rapport/rapport';
 
+import { LoginPage } from '../pages/login/login';
+import { RegisterPage } from '../pages/register/register';
+import { ProfilePage } from '../pages/profile/profile';
+import { ModifierProfilePage } from '../pages/profile/modifier-profile/modifier-profile';
 
 //providers
 import { GestionVentes } from '../providers/gestion-ventes';
@@ -81,7 +85,11 @@ import { GestionBoutique } from '../providers/gestion-boutique';
     ConfigBoutiquePage,
     ConfigProduitPage,
     ConfigTypeProduitPage,
-    RapportPage 
+    RapportPage,
+    LoginPage,
+    RegisterPage,
+    ProfilePage,
+    ModifierProfilePage,
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -122,7 +130,11 @@ import { GestionBoutique } from '../providers/gestion-boutique';
     ConfigBoutiquePage,
     ConfigProduitPage,
     ConfigTypeProduitPage,
-    RapportPage   
+    RapportPage,
+    LoginPage,
+    RegisterPage,
+    ProfilePage,
+    ModifierProfilePage,   
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage, GestionVentes, GestionAchats, GestionBoutique]
 })

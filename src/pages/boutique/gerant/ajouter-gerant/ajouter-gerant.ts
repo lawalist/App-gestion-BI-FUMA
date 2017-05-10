@@ -41,9 +41,9 @@ export class AjouterGerantPage {
     this.calculMatricule();
     let s = this.createDate(d.getDate(), d.getMonth(), d.getFullYear());
     this.status = ['En fonction', 'Abandon'];
-
+ 
     this.gerant = this.formBuilder.group({
-      id: [this.matricule, Validators.required],
+      _id: [this.matricule, Validators.required],
       nom: ['', Validators.required],
       //prenom: ['', Validators.required],
       status: ['', Validators.required],
@@ -125,24 +125,24 @@ export class AjouterGerantPage {
       matricule = id_int.toString();
     }
 
-    this.matricule = this.boutique_id.toString() + this.lettreNom + this.lettrePrenom + matricule;
+    this.matricule = this.boutique_id.toString() + ':gerant:' + this.lettreNom + this.lettrePrenom + matricule;
     //return matricule;
   }
 
   ionViewDidLoad() {
-    this.storage.get('boutique_id').then((id) => {
+    /*this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          this.gerants = data.gerants;
        });
-    });
+    });*/
   }
 
   ionViewWillEnter(){
-    this.storage.get('boutique_id').then((id) => {
+    /*this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          this.gerants = data.gerants;
        });
-    });
+    });*/
   }
 
   createDate(jour: any, moi: any, annee: any){
@@ -164,7 +164,7 @@ export class AjouterGerantPage {
 
 
   onChange(){
-    this.verifierStatusEnFonction();
+    //this.verifierStatusEnFonction();
   }
 
   verifierStatusEnFonction(){
@@ -195,7 +195,7 @@ export class AjouterGerantPage {
   ajouter(){
     let boutique: any = {} ;
     let gerants: any = [] ;
-    this.storage.get('boutique_id').then((id) => {
+    /*this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          boutique = data;
          if(data.gerants){
@@ -213,8 +213,9 @@ export class AjouterGerantPage {
           this.gestionService.updateBoutique(boutique);
         //}
        });
-    });
+    });*/
 
+    this.gestionService.createDoc(this.gerant.value);
     let toast = this.toastCtl.create({
       message: 'Gérant sauvegardée...',
       duration: 3000,

@@ -14,6 +14,13 @@
 
 
 <ion-content padding>
+
+  <ion-card>
+  <ion-card-header>
+    <h2>Edition produit: <strong>{{produit_id}}</strong></h2>
+  </ion-card-header>
+  </ion-card>
+
   <form [formGroup]="produit" (ngSubmit) = "modifier(produit)">
 
     <ion-item>

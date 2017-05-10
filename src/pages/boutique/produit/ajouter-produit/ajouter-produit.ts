@@ -35,7 +35,7 @@ export class AjouterProduitPage {
     'comprimé', 'autre'];
 
     this.produit = this.formBuilder.group({
-      id: [last_id, Validators.required],
+      _id: [boutique_id + ':produit:' + last_id, Validators.required],
       type_produit: ['', Validators.required],
       nom_produit: ['', Validators.required],
       quantite: [0, Validators.required],
@@ -65,7 +65,7 @@ export class AjouterProduitPage {
   ajouter(){
     let boutique: any = {} ;
     let produits: any = [] ;
-    this.storage.get('boutique_id').then((id) => {
+    /*this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          boutique = data;
          if(data.produits){
@@ -79,8 +79,9 @@ export class AjouterProduitPage {
           this.gestionService.updateBoutique(boutique);
         //}
        });
-    });
+    });*/
 
+    this.gestionService.createDoc(this.produit.value);
     let toast = this.toastCtl.create({
       message: 'Produit sauvegardée...',
       duration: 3000,
