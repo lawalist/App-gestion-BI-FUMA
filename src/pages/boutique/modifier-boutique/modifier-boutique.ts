@@ -40,7 +40,8 @@ export class ModifierBoutiquePage {
       _id: [this.ancienBoutique._id],
       _rev: [this.ancienBoutique._rev],
       nom: [this.ancienBoutique.nom],
-      type: [this.ancienBoutique.type, Validators.required],
+      type: [this.ancienBoutique.type],
+      type_boutique: [this.ancienBoutique.type_boutique, Validators.required],
       region: [this.ancienBoutique.region],
       departement: [this.ancienBoutique.departement],
       commune: [this.ancienBoutique.commune],
@@ -56,6 +57,8 @@ export class ModifierBoutiquePage {
       date_creation: [this.ancienBoutique.date_creation, Validators.required],
       solde_caisse: [this.ancienBoutique.solde_caisse, Validators.required],
       solde_tresor: [this.ancienBoutique.solde_tresor, Validators.required],
+      created_at: [this.ancienBoutique.created_at],
+      created_by: [this.ancienBoutique.created_by],
     });
   }
 

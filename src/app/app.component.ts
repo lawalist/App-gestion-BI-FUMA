@@ -49,14 +49,16 @@ export class MyApp {
         this.storage.set('ip_serveur', '127.0.0.1');
       }else{
         global.ip_serveur = ip;
-      }
+      } 
+
     });
 
     this.storage.get('boutique_id').then((id) => {
       if(id){
         this.gestionService.getBoutiqueById(id).then((res) => {
           loading.dismissAll();
-          this.rootPage = TabsPage;
+          //global.id_boutique = id;
+          this.rootPage = TabsPage; 
         }, error => {
             loading.dismissAll();
             let alert = this.alertCtl.create({

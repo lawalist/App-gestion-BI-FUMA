@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController } from 'ionic-angular';
+import { NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
 import { GestionBoutique } from '../../../providers/gestion-boutique';
 import { Storage } from '@ionic/storage';
 
@@ -31,9 +31,11 @@ export class ConfigBoutiquePage {
   concerve: boolean = false;
   ignore: boolean = false;
   estIgnorer: boolean = false;
+  produits: any = [];
+  gerants: any = [];
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtl: AlertController, public storage: Storage, public gestionService: GestionBoutique) {}
+  constructor(public navCtrl: NavController, public loadingCtl: LoadingController, public navParams: NavParams, public alertCtl: AlertController, public storage: Storage, public gestionService: GestionBoutique) {}
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ConfigBoutiquePage');
@@ -41,7 +43,7 @@ export class ConfigBoutiquePage {
 
   
   ionViewDidEnter(){
-    this.gestionService.doSync();
+    //this.gestionService.doSync();
     this.storage.get('boutique_id').then((id) => {
       if(id){
         if(global.suivant){
@@ -49,7 +51,15 @@ export class ConfigBoutiquePage {
           this.concerve = true;
         }
         this.gestionService.getBoutiqueById(id).then((data) => {
-          this.gestion(data);
+          this.gestionService.getPlageDocs(id+ ':produit', id+ ':produit:\ufff0').then((produits) => {
+            this.produits = produits;
+            this.gestionService.getPlageDocs(id+ ':gerant', id+ ':gerant:\ufff0').then((gerants) => {
+              this.gerants = gerants;
+              this.gestion(data, this.produits, this.gerants);
+            });
+          });
+          
+          
         }, error =>  {
           let alert = this.alertCtl.create({
             title: 'Erreur',
@@ -79,7 +89,7 @@ export class ConfigBoutiquePage {
     });
   }
 
-  gestion(data){
+  gestion(data, produits, gerants){
     if(global.changerInfoBoutique){
       let alert = this.alertCtl.create({
         title: 'Boutique déjà configurée',
@@ -90,7 +100,7 @@ export class ConfigBoutiquePage {
             handler: () => {
             // this.gestionService.getBoutiqueById(id).then((data) => { 
               if(!this.estIgnorer){
-                  if(data.gerants.length <= 0){
+                  if(gerants.length <= 0){
                     this.infoBoutique = true;
                     this.gerant = true;
                     this.typeProduit = false;
@@ -106,7 +116,7 @@ export class ConfigBoutiquePage {
                     this.ok = false;
                     this.ignore = true;
                     this.postion = 'type-produit';
-                  }else if (data.produits.length <= 0){
+                  }else if (produits.length <= 0){
                     this.infoBoutique = true;
                     this.gerant = true
                     this.typeProduit = true;
@@ -154,7 +164,7 @@ export class ConfigBoutiquePage {
     }else{
     // this.gestionService.getBoutiqueById(id).then((data) => { 
       if(!this.estIgnorer){
-          if(data.gerants.length <= 0){
+          if(gerants.length <= 0){
             this.infoBoutique = true;
             this.gerant = true;
             this.typeProduit = false;
@@ -170,7 +180,7 @@ export class ConfigBoutiquePage {
             this.ok = false;
             this.ignore = true;
             this.postion = 'type-produit';
-          }else if (data.produits.length <= 0){
+          }else if (produits.length <= 0){
             this.infoBoutique = true;
             this.gerant = true
             this.typeProduit = true;
@@ -205,6 +215,7 @@ export class ConfigBoutiquePage {
   }
 
   changerBoutique(){
+    global.ajout = 0;
     let alert = this.alertCtl.create({
       title: 'Changer boutique',
       cssClass: 'error',
@@ -225,32 +236,111 @@ export class ConfigBoutiquePage {
         {
           text: 'Valider',
           handler: data => {
-            this.gestionService.checkExists(data.boutique_id).then((result) => {
+            let loat = this.loadingCtl.create({
+              content: 'Chargement de la BD en cours...'
+            });
+            this.gestionService.checkRemoteExists(data.boutique_id).then((result) => {
               if(result){
-              this.gestionService.getBoutiqueById(data.boutique_id).then((boutique) => {
-                this.storage.set('boutique_id', boutique._id);
-                
-                global.changerInfoBoutique = false;
-                //this.ionViewDidEnter();
-                //this.navCtrl.viewDidEnter;
-                //this.ionViewDidEnter();
-              });
-
-              let alt = this.alertCtl.create({
-                title: 'Succes',
-                message: 'Boutique chargée avec succes',
-                buttons:[
-                  {
-                    text: 'ok',
-                    handler: () => this.ionViewDidEnter()
+                loat.present();
+                this.gestionService.db.sync(this.gestionService.remote, {
+                  live: true,
+                  retry: true,
+                  continuous: true,
+                  //filter: 'mydesign/myfilter'
+                  filter: (doc) => {
+                    return doc._id.match(data.boutique_id+'[0-9a-zA-Z_:]*');
                   }
-                ]
-              });
+                }).on('change',  (info) => {
+                  //loat.dismissAll();
+                  // handle change
+                }).on('paused',  (err) => {
+                    this.gestionService.getBoutiqueById(data.boutique_id).then((boutique) => {
+                      this.storage.set('boutique_id', boutique._id);
+                
+                      global.changerInfoBoutique = false;
+                      //this.ionViewDidEnter();
+                      //this.navCtrl.viewDidEnter;
+                      //this.ionViewDidEnter();
+                    });
 
-              alt.present()
+                    loat.dismissAll();
+                    let alt = this.alertCtl.create({
+                      title: 'Succes',
+                      message: 'Boutique chargée avec succes',
+                      buttons:[
+                        {
+                          text: 'ok',
+                          handler: () => this.ionViewDidEnter()
+                        }
+                      ]
+                    });
+                    if(global.ajout === 0){
+                      alt.present();
+                      global.ajout = 1;
+                    }
+                    
 
-              //this.ionViewDidEnter();
-            }else{
+                    //this.ionViewDidEnter();
+                  // replication paused (e.g. replication up to date, user went offline)
+                }).on('active',  () => {
+                  // replicate resumed (e.g. new changes replicating, user went back online)
+                }).on('denied',  (err) => {
+                  let alt = this.alertCtl.create({
+                      title: 'denied',
+                      message: 'Sync denied',
+                      buttons:[
+                        {
+                          text: 'ok',
+                          handler: () => this.ionViewDidEnter()
+                        }
+                      ]
+                    });
+
+                    alt.present()
+                  // a document failed to replicate (e.g. due to permissions)
+                }).on('complete',  (info) => {
+                  this.gestionService.getBoutiqueById(data.boutique_id).then((boutique) => {
+                      this.storage.set('boutique_id', boutique._id);
+                
+                      global.changerInfoBoutique = false;
+                      //this.ionViewDidEnter();
+                      //this.navCtrl.viewDidEnter;
+                      //this.ionViewDidEnter();
+                    });
+
+                    loat.dismissAll();
+                    let alt = this.alertCtl.create({
+                      title: 'Succes',
+                      message: 'Boutique chargée avec succes',
+                      buttons:[
+                        {
+                          text: 'ok',
+                          handler: () => this.ionViewDidEnter()
+                        }
+                      ]
+                    });
+
+                  alt.present()
+                  // handle complete
+                }).on('error',  (err) => {
+                  loat.dismissAll();
+                  let alt = this.alertCtl.create({
+                      title: 'Erreur',
+                      message: 'Erreur lors de la synchronisation',
+                      buttons:[
+                        {
+                          text: 'ok',
+                          handler: () => this.ionViewDidEnter()
+                        }
+                      ]
+                    });
+
+                    alt.present()
+                  // handle error
+                });
+                
+                
+              }else{
               let alert = this.alertCtl.create({
                 title: 'Erreur',
                 message: 'Echec de la connexion ou la boutique indiquée n\'existe pas!',
@@ -259,10 +349,9 @@ export class ConfigBoutiquePage {
 
               alert.present();
             }
-            });
             
-            
-          }
+          });
+        }
         }
       ]
     });

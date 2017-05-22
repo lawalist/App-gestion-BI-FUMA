@@ -35,24 +35,49 @@ export class AjouterOperationPage {
   typeProduits: any = [];
   typeOperation: any = [];
   boutique: any = [];
+  gerants: any = [];
+  boutique_id: any;
+  last_id: any;
+  code_op: any = '';
+  old_code_op: any;
+  typeProduitDecaissement: any = [{
+    "nom": "Argent"
+  },];
+
+  produitDecaissement: any = [{
+      "_id": 'produit:999',
+      "type_produit": "produit:Argent",
+      "nom_produit": "Argent",
+      "quantite": 0,
+      "prix": "1",
+      "unite_mesure": "F",
+      "prix_total": 0
+    }];
+  
 
   constructor(public storage: Storage, public navCtrl: NavController, public viewCtl: ViewController, public alertCtl: AlertController, public navParams: NavParams, public toastCtl: ToastController, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
-    let last_id = this.navParams.data.last_id;
-    this.tousProduits = this.navParams.data.produits;
+    this.last_id = this.navParams.data.last_id;
+    //this.last_id = this.calculID(this.last_id);
+    //this.tousProduits = this.navParams.data.produits;
     this.typeOperation = ['VENTE' , 'DEPENSE', 'DECAISSEMENT', 'LOCATION', 'RETOUR LOCATION', 'SUBVENTION'];
 
-    let boutique_id = this.navParams.data.boutique_id;
+    this.boutique_id = this.navParams.data.boutique_id;
 
-    this.gestionService.getBoutiqueById(boutique_id).then((boutique) => {
+    this.gestionService.getBoutiqueById(this.boutique_id).then((boutique) => {
+      this.boutique = boutique;
       this.typeProduits = boutique.type_produits;
+      this.produitDecaissement.quantite = boutique.solde_caisse;
       });
 
+    this.code_op = this.last_id;
+    this.old_code_op = this.code_op;
     let d: Date = new Date();
     let s = this.createDate(d.getDate(), d.getMonth(), d.getFullYear());
     if(this.selectedProduit){
       this.quantite = this.selectedProduit.quantite;
       this.operation = this.formBuilder.group({
-        id: [last_id, Validators.required],
+        _id: [this.last_id, Validators.required],
+        code_operation: [this.code_op, Validators.required],
         type: ['', Validators.required],
         date: [s, Validators.required],
         //type_produit: ['', Validators.required],
@@ -62,6 +87,7 @@ export class AjouterOperationPage {
         quantite: [this.quantiteMax, Validators.compose([Validators.required])],
         prix_unitaire: [this.selectedProduit.prix, Validators.required],
         montant_total: [this.totalPrix, Validators.compose([Validators.required])],
+        matricule_client: [''],
         nom_client: [''],
         sex_client: [''],
         village_client: [''],
@@ -72,8 +98,9 @@ export class AjouterOperationPage {
     }else{
       this.operation = this.formBuilder.group({
       //quantite: ['', Validators.compose([Validators.required, testQuantite(this.quantite + 1)])],
-        id: [last_id, Validators.required],
+        _id: [this.last_id, Validators.required],
         type: ['', Validators.required],
+        code_operation: [this.code_op, Validators.required],
         //type_produit: ['', Validators.required],
         type_produit: ['', Validators.required],
         code_produit: ['', Validators.required],
@@ -82,6 +109,7 @@ export class AjouterOperationPage {
         prix_unitaire: [this.prixUnitaire, Validators.required],
         montant_total: [this.totalPrix, Validators.compose([Validators.required])],
         date: [s, Validators.required],
+        matricule_client: [''],
         nom_client: [''],
         sex_client: [''],
         village_client: [''],
@@ -91,23 +119,38 @@ export class AjouterOperationPage {
     }
   }
 
-  ionViewDidLoad() {
+  ionViewWillLoad() {
     this.storage.get('boutique_id').then((id) => {
-       this.gestionService.getBoutiqueById(id).then((data) => {
-         this.boutique = data;
+       this.gestionService.getPlageDocs(id + ':gerant', id + ':gerant:\ufff0').then((data) => {
+         this.gerants = data;
        });
+
+       this.gestionService.getPlageDocs(id + ':produit', id + ':produit:\ufff0').then((data) => {
+         this.tousProduits = data;
+       });
+
+      /* this.gestionService.getBoutiqueById(id).then((data) => {
+         this.boutique = data;
+       });*/
       });
   
   }
 
   choixTypeOperation(){
     let op = this.operation.value;
+
+    this.code_op = op.type.substr(0,1).toUpperCase() + this.old_code_op.toString();
     switch (op.type){
       case 'DEPENSE':
         this.textQuantiteMax = 'Solde trésor disponible: '+ this.boutique.solde_tresor + 'FCFA';
         break;
       case 'DECAISSEMENT':
+        //this.typeProduits
+        //this.produits
         this.textQuantiteMax = 'Solde caisse disponible: '+ this.boutique.solde_caisse + 'FCFA';
+        //this.selectedProduit = this.produitDecaissement[0];
+        //this.selectedTypeProduit = this.typeProduitDecaissement[0];
+
         break;
       default:
         this.textQuantiteMax = '';
@@ -135,6 +178,7 @@ export class AjouterOperationPage {
         break;
         case 'RETOUR LOCATION':
           this.textQuantiteMax = '';
+          this.selectedProduitPrixUnitaire = 0;
         break;
       case 'SUBVENTION':
         this.textQuantiteMax = '';
@@ -367,7 +411,8 @@ export class AjouterOperationPage {
             this.quantite = op.quantite;
 
             if(parseInt(this.quantite)){
-              this.totalPrix = this.prixUnitaire * this.quantite;
+              //this.totalPrix = this.prixUnitaire * this.quantite;
+              this.totalPrix = 0;
             }else{
                   this.totalPrix = 0;
             } 
@@ -424,33 +469,46 @@ export class AjouterOperationPage {
     return s;
   }
 
+   determineID(id, typeOperation){
+    //let id_int  = parseInt(id);
+    //id_int++;
+    //let newID = '';
+    return this.boutique_id + ':operation:'+typeOperation+':' + this.code_op;// + ':produit:'+ this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1);
+                  
+
+    //return newID;
+    //this.matricule = this.boutique_id.toString() + ':gerant:' + this.lettreNom + this.lettrePrenom + matricule;
+    //return matricule;
+  }
+
+
   ajouter(){
 
-    let boutique: any = {} ;
+    let boutique: any = this.boutique;
     //let operations: any = [] ;
     let operations: any = []
     let produits: any = [];
-    this.storage.get('boutique_id').then((id) => {
-       this.gestionService.getBoutiqueById(id).then((data) => {
-         boutique = data;
+    //this.storage.get('boutique_id').then((id) => {
+    //   this.gestionService.getBoutiqueById(id).then((data) => {
+    //     boutique = data;
          /*if(data.ventes){
           ventes = data.ventes;
          }*/
 
-         if(data.operations){
-          operations = data.operations;
-         }
+    //     if(data.operations){
+     //     operations = data.operations;
+    //     }
 
          let op = this.operation.value;
         
 
          //charger les informations concernant le produit
-         op.code_produit = this.selectedProduit.id;
+         op.code_produit = this.selectedProduit.code_produit;
          op.nom_produit = this.selectedProduit.nom_produit;
          op.unite = this.selectedProduit.unite_mesure;
 
          //chercher les information concernant le gérant et les mettre dans le detail de l'operation
-         data.gerants.forEach((gerant, index) => {
+         this.gerants.forEach((gerant, index) => {
            if(gerant.status == 'En fonction'){
              op.matricule_gerant = gerant.id;
              op.nom_gerant = gerant.nom;
@@ -466,15 +524,18 @@ export class AjouterOperationPage {
             case 'VENTE':
               if(parseInt(op.quantite) <= parseInt(this.selectedProduit.quantite) ){
                   //Mise a jour de la quantité du produit vendu
-                  produits = data.produits;
-                  produits.forEach((prod, index) => {
-                    if(prod.id === this.selectedProduit.id){
+                  produits = this.produits;
+                  //produits.forEach((prod, index) => {
+                  //  if(prod.id === this.selectedProduit.id){
                       //prod.quantite = prod.quantite 
-                      produits[index].quantite = parseInt(produits[index].quantite) - parseInt(op.quantite);
-                    }
-                  });
+                      //produits[index].quantite = parseInt(produits[index].quantite) - parseInt(op.quantite);
+                      //this.gestionService.updateDoc(produits[index]);
+                 //   }
+                 // });
+                 this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(op.quantite);
+                 this.gestionService.updateDoc(this.selectedProduit);
 
-                  boutique.produits = produits;
+                  //boutique.produits = produits;
                   //Mise à jour du montant de la caisse
                   if(parseInt(boutique.solde_caisse)){
                     boutique.solde_caisse = parseInt(boutique.solde_caisse) + parseInt(this.totalPrix);
@@ -485,8 +546,11 @@ export class AjouterOperationPage {
                   //Mise a jour operation
                   op.solde_caisse = boutique.solde_caisse;
                   op.solde_tresor = boutique.solde_tresor;
-                  operations.push(op);
-                  boutique.operations = operations;
+                  //this.last_id
+                  op._id = this.determineID(this.last_id, 'vente');
+                  //operations.push(op);
+                  this.gestionService.createDoc(op);
+                  //boutique.operations = operations;
             
                   this.gestionService.updateBoutique(boutique);
                   toast = this.toastCtl.create({
@@ -517,15 +581,16 @@ export class AjouterOperationPage {
             case 'DEPENSE':
               if(parseInt(op.montant_total) <= parseInt(this.boutique.solde_tresor)){
                 //Mise a jour de la quantité du produit loué
-                produits = data.produits;
-                produits.forEach((prod, index) => {
-                  if(prod.id === this.selectedProduit.id){
+                produits = this.produits;
+                //produits.forEach((prod, index) => {
+                //  if(prod._id === this.selectedProduit._id){
                     //prod.quantite = prod.quantite 
-                    produits[index].quantite = parseInt(produits[index].quantite) + parseInt(op.quantite);
-                  }
-                });
+                    this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(op.quantite);
+                    this.gestionService.updateDoc(this.selectedProduit);
+                //  }
+               // });
 
-                boutique.produits = produits;
+                //boutique.produits = produits;
                 //Mise à jour du montant de la caisse
                 if(parseInt(boutique.solde_tresor)){
                   boutique.solde_tresor = parseInt(boutique.solde_tresor) - parseInt(this.totalPrix);
@@ -536,8 +601,10 @@ export class AjouterOperationPage {
                 //Mise a jour operation
                 op.solde_caisse = boutique.solde_caisse;
                 op.solde_tresor = boutique.solde_tresor;
-                operations.push(op);
-                boutique.operations = operations;
+                op._id = this.determineID(this.last_id, 'depense');
+                this.gestionService.createDoc(op);
+                //operations.push(op);
+                //boutique.operations = operations;
 
                 this.gestionService.updateBoutique(boutique);
                 toast = this.toastCtl.create({
@@ -585,8 +652,10 @@ export class AjouterOperationPage {
                 //Mise a jour operation
                 op.solde_caisse = boutique.solde_caisse;
                 op.solde_tresor = boutique.solde_tresor;
-                operations.push(op);
-                boutique.operations = operations;
+                op._id = this.determineID(this.last_id, 'decaissement');
+                this.gestionService.createDoc(op);
+                //operations.push(op);
+                //boutique.operations = operations;
 
                 this.gestionService.updateBoutique(boutique);
                 toast = this.toastCtl.create({
@@ -619,15 +688,16 @@ export class AjouterOperationPage {
             case 'LOCATION':
               if(parseInt(op.quantite) <= parseInt(this.selectedProduit.quantite) ){
                 //Mise a jour de la quantité du produit loué
-                produits = data.produits;
-                produits.forEach((prod, index) => {
-                  if(prod.id === this.selectedProduit.id){
+                produits = this.produits;
+                //produits.forEach((prod, index) => {
+                //  if(prod.id === this.selectedProduit.id){
                     //prod.quantite = prod.quantite 
-                    produits[index].quantite = parseInt(produits[index].quantite) - parseInt(op.quantite);
-                  }
-                });
+                    this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(op.quantite);
+                    this.gestionService.updateDoc(this.selectedProduit);
+               //   }
+               // });
 
-                boutique.produits = produits;
+                //boutique.produits = produits;
                 //Mise à jour du montant de la caisse
                 if(parseInt(boutique.solde_caisse)){
                   boutique.solde_caisse = parseInt(boutique.solde_caisse) + parseInt(this.totalPrix);
@@ -638,8 +708,10 @@ export class AjouterOperationPage {
                 //Mise a jour operation
                 op.solde_caisse = boutique.solde_caisse;
                 op.solde_tresor = boutique.solde_tresor;
-                operations.push(op);
-                boutique.operations = operations;
+                op._id = this.determineID(this.last_id, 'location');
+                this.gestionService.createDoc(op);
+                //operations.push(op);
+                //boutique.operations = operations;
 
                 this.gestionService.updateBoutique(boutique);
                 toast = this.toastCtl.create({
@@ -669,20 +741,23 @@ export class AjouterOperationPage {
 
             case 'RETOUR LOCATION':
               //Mise a jour de la quantité du produit loué
-              produits = data.produits;
-              produits.forEach((prod, index) => {
-                if(prod.id === this.selectedProduit.id){
+              produits = this.produits;
+              //produits.forEach((prod, index) => {
+                //if(prod.id === this.selectedProduit.id){
                   //prod.quantite = prod.quantite 
-                  produits[index].quantite = parseInt(produits[index].quantite) + parseInt(op.quantite);
-                }
-              });
+                  this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(op.quantite);
+                  this.gestionService.updateDoc(this.selectedProduit);
+              //  }
+              //});
 
-              boutique.produits = produits;
+              //boutique.produits = produits;
               //Mise a jour operation
               op.solde_caisse = boutique.solde_caisse;
               op.solde_tresor = boutique.solde_tresor;
-              operations.push(op);
-              boutique.operations = operations;
+              op._id = this.determineID(this.last_id, 'retour_location');
+              this.gestionService.createDoc(op);
+              //operations.push(op);
+              //boutique.operations = operations;
 
               this.gestionService.updateBoutique(boutique);
               toast = this.toastCtl.create({
@@ -697,20 +772,23 @@ export class AjouterOperationPage {
 
             case 'SUBVENTION':
               //Mise a jour de la quantité du produit loué
-              produits = data.produits;
-              produits.forEach((prod, index) => {
-                if(prod.id === this.selectedProduit.id){
+              produits = this.produits;
+              //produits.forEach((prod, index) => {
+               // if(prod.id === this.selectedProduit.id){
                   //prod.quantite = prod.quantite 
-                  produits[index].quantite = parseInt(produits[index].quantite) + parseInt(op.quantite);
-                }
-              });
+                  this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(op.quantite);
+                  this.gestionService.updateDoc(this.selectedProduit);
+              //  }
+              //});
 
-              boutique.produits = produits;
+              //boutique.produits = produits;
               //Mise a jour operation
               op.solde_caisse = boutique.solde_caisse;
               op.solde_tresor = boutique.solde_tresor;
-              operations.push(op);
-              boutique.operations = operations;
+              op._id = this.determineID(this.last_id, 'subvention');
+              this.gestionService.createDoc(op);
+              //operations.push(op);
+              //boutique.operations = operations;
 
               this.gestionService.updateBoutique(boutique);
               toast = this.toastCtl.create({
@@ -729,8 +807,8 @@ export class AjouterOperationPage {
               break;*/
           }
 
-       });
-    });
+    //   });
+    //});
   }
 
   annuler(){

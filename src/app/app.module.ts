@@ -3,16 +3,8 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 import { MyApp } from './app.component';
-import { VentesPage } from '../pages/ventes/ventes';
-import { AchatsPage } from '../pages/achats/achats';
 import { AdminPage } from '../pages/admin/admin';
 import { TabsPage } from '../pages/tabs/tabs';
-import { AjouterVentePage } from '../pages/ventes/ajouter-vente/ajouter-vente';
-import { ModifierVentePage } from '../pages/ventes/modifier-vente/modifier-vente';
-import { AjouterAchatPage } from '../pages/achats/ajouter-achat/ajouter-achat';
-import { ModifierAchatPage } from '../pages/achats/modifier-achat/modifier-achat';
-import { DetailAchatPage } from '../pages/achats/detail-achat/detail-achat';
-import { DetailVentePage  } from '../pages/ventes/detail-vente/detail-vente';
 import { BoutiquePage } from '../pages/boutique/boutique';
 import { AjouterBoutiquePage } from '../pages/boutique/ajouter-boutique/ajouter-boutique';
 import { ModifierBoutiquePage } from '../pages/boutique/modifier-boutique/modifier-boutique';
@@ -45,24 +37,19 @@ import { ProfilePage } from '../pages/profile/profile';
 import { ModifierProfilePage } from '../pages/profile/modifier-profile/modifier-profile';
 
 //providers
-import { GestionVentes } from '../providers/gestion-ventes';
-import { GestionAchats } from '../providers/gestion-achats';
+//import { GestionVentes } from '../providers/gestion-ventes';
+//import { GestionAchats } from '../providers/gestion-achats';
 import { GestionBoutique } from '../providers/gestion-boutique';
+
+//module
+import { AutoCompleteModule } from 'ionic2-auto-complete';
 
 @NgModule({
   declarations: [
     MyApp,
     AdminPage,
     AccueilPage,
-    AchatsPage,
-    VentesPage,
     TabsPage,
-    AjouterVentePage,
-    ModifierVentePage,
-    AjouterAchatPage,
-    ModifierAchatPage,
-    DetailAchatPage,
-    DetailVentePage,
     BoutiquePage,
     AjouterBoutiquePage,
     ModifierBoutiquePage,
@@ -90,8 +77,10 @@ import { GestionBoutique } from '../providers/gestion-boutique';
     RegisterPage,
     ProfilePage,
     ModifierProfilePage,
+    //AutoCompleteModule,
   ],
   imports: [
+    //AutoCompleteModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
@@ -99,15 +88,7 @@ import { GestionBoutique } from '../providers/gestion-boutique';
     MyApp,
     AdminPage,
     AccueilPage,
-    AchatsPage,
-    VentesPage,
     TabsPage,
-    AjouterVentePage,
-    ModifierVentePage,
-    AjouterAchatPage,
-    ModifierAchatPage,
-    DetailAchatPage,
-    DetailVentePage,
     BoutiquePage,
     AjouterBoutiquePage,
     ModifierBoutiquePage,
@@ -136,6 +117,6 @@ import { GestionBoutique } from '../providers/gestion-boutique';
     ProfilePage,
     ModifierProfilePage,   
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage, GestionVentes, GestionAchats, GestionBoutique]
+  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage, GestionBoutique]
 })
 export class AppModule {}

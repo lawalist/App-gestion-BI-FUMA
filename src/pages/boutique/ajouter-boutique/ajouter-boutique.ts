@@ -38,7 +38,8 @@ export class AjouterBoutiquePage {
     this.boutique = this.formBuilder.group({
       _id: ['', Validators.required],
       nom: [''],
-      type: ['', Validators.required],
+      type: ['boutique'],
+      type_boutique: ['', Validators.required],
       region: [''],
       departement: [''],
       commune: [''],
@@ -92,7 +93,7 @@ export class AjouterBoutiquePage {
     //boutiq.gerants = [];
     boutiq.type_produits = [];
     boutiq.unites = [];
-    boutiq.operations = [];
+    //boutiq.operations = [];
     //boutiq.produits = [];
     //boutiq.ventes = [];
     //boutiq.achats = [];

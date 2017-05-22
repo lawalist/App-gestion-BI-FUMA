@@ -17,7 +17,7 @@
 
   <ion-card>
   <ion-card-header>
-    <h2>Edition produit: <strong>{{produit_id}}</strong></h2>
+    <h2>Edition produit: <strong>{{code_prod}}</strong></h2>
   </ion-card-header>
   </ion-card>
 
@@ -71,7 +71,7 @@
 
   <ion-item>
     <ion-label floating>Prix total (FCFA) <span class="error-box">*</span></ion-label>
-    <ion-input type="number" formControlName="prix_total" [(ngModel)]="prix_total"></ion-input>
+    <ion-input type="number" formControlName="prix_total" [(ngModel)]="prix_total" disabled></ion-input>
   </ion-item>
 <div style="padding-left: 15px;" class="error-box" *ngIf="produit.controls['prix_total'].hasError('required') && produit.controls['prix_total'].touched">* Le prix total est obligatoir!</div>
 

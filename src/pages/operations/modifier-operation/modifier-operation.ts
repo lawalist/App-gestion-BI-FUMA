@@ -17,6 +17,7 @@ import { GestionBoutique } from '../../../providers/gestion-boutique';
 })
 export class ModifierOperationPage {
   operation: any;
+  idOperation: any = '';
   ancienOperation:any;
   produits: any;
   tousProduits: any;
@@ -35,9 +36,12 @@ export class ModifierOperationPage {
   typeProduits: any = [];
   typeOperation: any = [];
   boutique: any;
+  allProduits: any = [];
+  allOperation: any = [];
 
   constructor(public storage: Storage, public navCtrl: NavController, public alertCtl: AlertController, public navParams: NavParams,public toastCtl: ToastController, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
     this.ancienOperation = this.navParams.get('operation');
+    this.idOperation = this.ancienOperation.code_operation;//.substr(this.ancienOperation._id.lastIndexOf(':') + 1)
     //this.selectedProduit = this.ancienVent.produit;
     this.boutique_id = this.navParams.data.boutique_id;
     this.prixUnitaire = this.ancienOperation.prix_unitaire;
@@ -54,18 +58,22 @@ export class ModifierOperationPage {
 
     //enlever le produit selectionné de la liste
     this.gestionService.getBoutiqueById(this.boutique_id).then((boutique) => {
-    this.tousProduits = boutique.produits;
-    this.typeProduits = boutique.type_produits;
+       this.typeProduits = boutique.type_produits;
+    });
+    //this.tousProduits = boutique.produits;
+    
+    this.gestionService.getPlageDocs(this.boutique_id + ':produit', this.boutique_id + ':produit:\ufff0').then((data) => {
+      this.tousProduits = data;
 
-    this.produits = [];
-    this.tousProduits.forEach((tprod, index) => {
-      if(tprod.type_produit === this.selectedTypeProduit){
-        this.produits.push(tprod);
-      }
+      this.produits = [];
+      this.tousProduits.forEach((tprod, index) => {
+        if(tprod.type_produit === this.selectedTypeProduit){
+          this.produits.push(tprod);
+        }
     });
 
       this.tousProduits.forEach((tprod, index) => {
-          if(tprod.id === this.ancienOperation.code_produit){
+          if(tprod.code_produit  === this.ancienOperation.code_produit){
             //this.produits.splice(index, 1);
             this.selectedProduit = tprod;
             //this.textQuantiteMax = 'Stock disponigle: ' + tprod.quantite + ' (' + tprod.unite_mesure +')';
@@ -95,8 +103,10 @@ export class ModifierOperationPage {
       });
 
     this.operation = this.formBuilder.group({
-      id: [this.ancienOperation.id],
+      _id: [this.ancienOperation._id],
+      _rev: [this.ancienOperation._rev],
       type: [this.ancienOperation.type],
+      code_operation: [this.ancienOperation.code_operation],
       date: [this.ancienOperation.date, Validators.required],
       code_produit: [this.ancienOperation.code_produit, Validators.required],
       type_produit: [this.ancienOperation.type_produit, Validators.required],
@@ -104,6 +114,7 @@ export class ModifierOperationPage {
       quantite: [this.ancienOperation.quantite, Validators.compose([Validators.required])],
       prix_unitaire: [this.ancienOperation.prix_unitaire, Validators.required],
       montant_total: [this.ancienOperation.montant_total, Validators.compose([Validators.required])],
+      matricule_client: [this.ancienOperation.matricule_client],
       nom_client: [this.ancienOperation.nom_client],
       sex_client: [this.ancienOperation.sex_client],
       village_client: [this.ancienOperation.village_client],
@@ -113,7 +124,12 @@ export class ModifierOperationPage {
       nom_gerant: [this.ancienOperation.nom_gerant],
       //prenom_gerant: [this.ancienOperation.prenom_gerant],
       solde_caisse: [this.ancienOperation.solde_caisse],
-      solde_tresor: [this.ancienOperation.solde_tresor]
+      solde_tresor: [this.ancienOperation.solde_tresor],
+      created_at: [this.ancienOperation.created_at],
+      created_by: [this.ancienOperation.created_by],
+      //updatet_at: [this.ancienOperation.updatet_at],
+      
+      //updated_by: [this.ancienOperation.updated_by],
     });
 
     //this.choisiTypeProduit();
@@ -124,7 +140,7 @@ export class ModifierOperationPage {
        this.gestionService.getBoutiqueById(id).then((data) => {
          this.boutique = data;
        });
-      });
+      }); 
   
   }
 
@@ -172,11 +188,15 @@ export class ModifierOperationPage {
     if(this.selectedTypeProduit === this.ancienOperation.type_produit){
       //on charge les anciens donnees
       this.tousProduits.forEach((tprod, index) => {
-          if(tprod.id === this.ancienOperation.code_produit){
+          if(tprod.code_produit === this.ancienOperation.code_produit){
             //this.produits.splice(index, 1);
             this.selectedProduit = tprod;
           }
         });
+        
+        /*this.gestionService.getDocById(this.boutique_id+':produit:'+this.ancienOperation.code_produit).then((op) => {
+          this.selectedProduit = op;
+        });*/
 
       this.selectedProduitPrixUnitaire = this.ancienOperation.prix_unitaire;
       this.textQuantite = 'Quantité (' + this.ancienOperation.unite_mesure +')';
@@ -194,12 +214,20 @@ export class ModifierOperationPage {
   }
 
   ionViewWillEnter(){
+
     /*this.gestionService.getBoutiqueById(this.boutique_id).then((boutique) => {
       this.produits = boutique.produits;
     });*/
   }
 
   ionViewDidEnter(){
+    this.gestionService.getPlageDocs(this.boutique_id + ':produit', this.boutique_id+ ':produit:\ufff0').then((produits) => {
+      this.allProduits = produits;
+    });
+
+    this.gestionService.getPlageDocs(this.boutique_id + ':operation', this.boutique_id+ ':operation:\ufff0').then((operations) => {
+      this.allOperation = operations;
+    });
     /*this.gestionService.getBoutiqueById(this.boutique_id).then((boutique) => {
       this.produits = boutique.produits;
     });*/
@@ -779,58 +807,65 @@ export class ModifierOperationPage {
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          boutique = data;
-         let produits = data.produits;
+         let produits = this.tousProduits;
          //ventes = data.ventes;
-         operations = data.operations;
+         operations = this.allOperation;
          let nouvelleOperation = this.operation.value;
          let qMax: any = '';
          let inexProuit: any = '';
          let estOk: boolean = false;
 
+         //this.ancienOperation._id.substr(this.ancienOperation._id.length - 3, this.ancienOperation._id.length -1)
          //mise a jour produit
-         nouvelleOperation.code_produit = this.selectedProduit.id;
+         nouvelleOperation.code_produit = this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1);
          nouvelleOperation.nom_produit = this.selectedProduit.nom_produit;
          nouvelleOperation.unite = this.selectedProduit.unite_mesure;
 
+         this.gestionService.updateDoc(nouvelleOperation);
+
          switch(nouvelleOperation.type){
            case 'VENTE':
-            operations.forEach((operation, index) => {
-              if(operation.id === nouvelleOperation.id){
+            //operations.forEach((operation, index) => {
+              //if(operation.id === nouvelleOperation.id){
                 //cas du meme produit
-                if(nouvelleOperation.code_produit === this.ancienOperation.code_produit){
+                //
+               
+                if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1)  === this.ancienOperation.code_produit) /*(nouvelleOperation.code_produit === this.ancienOperation.code_produit)*/{
                   //cas d'une augmentation de la quantité du produit
-                    if(parseInt(operation.quantite) < parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    if(parseInt(this.ancienOperation.quantite) < parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       qMax = nq;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                       //cas d'une duminition de la quantité du produit
-                    }else if(parseInt(operation.quantite) > parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    }else if(parseInt(this.ancienOperation.quantite) > parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       qMax = nouvelleOperation.quantite;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                     }
 
                     //on met a jour la nouvelle vente
-                    indexOperation = index;
-                    operations[index] = nouvelleOperation;
+                    //indexOperation = index;
+                    //operations[index] = nouvelleOperation;
+                    //this.gestionService.updateDoc(nouvelleOperation);
                    
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
-                      if(prod.id === nouvelleOperation.code_produit){
+                   // produits.forEach((prod, index) => {
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
-                          if(qMax <= produits[index].quantite){
-                            produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nq);
+                          if(qMax <= this.selectedProduit.quantite){
+                            this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
                             estOk = true;
+                            this.gestionService.updateDoc(this.selectedProduit);
                           } 
                   
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
-                    });
+                   // });
 
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_caisse)){
@@ -838,33 +873,35 @@ export class ModifierOperationPage {
                     }else{
                       boutique.solde_caisse = parseInt(nm);
                     }
-            
+                
                 }else{
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
+                    //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(prod.id === this.ancienOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
-                          produits[index].quantite = parseInt(produits[index].quantite) + parseInt(this.ancienOperation.quantite);
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(prod.id === nouvelleOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
-                        if(parseInt(produits[index].quantite) >= parseInt(nouvelleOperation.quantite)){
-                          produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nouvelleOperation.quantite);
+                        if(parseInt(this.selectedProduit.quantite) >= parseInt(nouvelleOperation.quantite)){
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                           estOk = true
                         }
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
                       }
-                    });
+                    //});
                     
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_caisse)){
@@ -877,8 +914,9 @@ export class ModifierOperationPage {
                 }
 
                 if(estOk){
-                  boutique.operations = operations;
-                  boutique.produits = produits;
+                  //boutique.operations = operations;
+                  //boutique.produits = produits;
+                  this.gestionService.updateDoc(nouvelleOperation);
                   this.gestionService.updateBoutique(boutique);
 
                   toast = this.toastCtl.create({
@@ -904,47 +942,49 @@ export class ModifierOperationPage {
                 alert.present();
                 }
                     
-              }
-            });
+             // }
+           // });
             break;
            case 'DEPENSE':
-            operations.forEach((operation, index) => {
-              if(operation.id === nouvelleOperation.id){
+            //operations.forEach((operation, index) => {
+              //if(operation.id === nouvelleOperation.id){
                 //cas du meme produit
                 if(nouvelleOperation.code_produit === this.ancienOperation.code_produit){
                   //cas d'une augmentation de la quantité du produit
-                    if(parseInt(operation.quantite) < parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    if(parseInt(this.ancienOperation.quantite) < parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       qMax = nq;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                       //cas d'une duminition de la quantité du produit
-                    }else if(parseInt(operation.quantite) > parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    }else if(parseInt(this.ancienOperation.quantite) > parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       qMax = nouvelleOperation.quantite;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                     }
 
                     //on met a jour la nouvelle vente
-                    indexOperation = index;
-                    operations[index] = nouvelleOperation;
+                    //indexOperation = index;
+                    //operations[index] = nouvelleOperation;
+                    this.gestionService.updateDoc(nouvelleOperation);
                    
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
-                      if(prod.id === nouvelleOperation.code_produit){
+                    //produits.forEach((prod, index) => {
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           if(qMax <= this.boutique.solde_tresor){
-                            produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nq);
+                            this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
                             estOk = true;
+                            this.gestionService.updateDoc(this.selectedProduit);
                           } 
                   
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
-                    });
+                       }
+                   // });
 
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_tresor)){
@@ -956,29 +996,31 @@ export class ModifierOperationPage {
                 }else{
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
+                   // produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(prod.id === this.ancienOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
-                          produits[index].quantite = parseInt(produits[index].quantite) + parseInt(this.ancienOperation.quantite);
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(prod.id === nouvelleOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
                         if(parseInt(this.boutique.solde_tresor) >= parseInt(nouvelleOperation.quantite)){
-                          produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nouvelleOperation.quantite);
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                           estOk = true
                         }
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
                       }
-                    });
+                    //});
                     
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_tresor)){
@@ -991,8 +1033,8 @@ export class ModifierOperationPage {
                 }
 
                 if(estOk){
-                  boutique.operations = operations;
-                  boutique.produits = produits;
+                  //boutique.operations = operations;
+                  //boutique.produits = produits;
                   this.gestionService.updateBoutique(boutique);
 
                   toast = this.toastCtl.create({
@@ -1018,47 +1060,49 @@ export class ModifierOperationPage {
                 alert.present();
                 }
                     
-              }
-            });
+              //}
+            //});
             break;
            case 'DECAISSEMENT':
-            operations.forEach((operation, index) => {
-              if(operation.id === nouvelleOperation.id){
+            //operations.forEach((operation, index) => {
+              //if(operation.id === nouvelleOperation.id){
                 //cas du meme produit
-                if(nouvelleOperation.code_produit === this.ancienOperation.code_produit){
+                if(nouvelleOperation.code_produit === this.ancienOperation.code_produit){   
                   //cas d'une augmentation de la quantité du produit
-                    if(parseInt(operation.quantite) < parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    if(parseInt(this.ancienOperation.quantite) < parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       qMax = nq;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                       //cas d'une duminition de la quantité du produit
-                    }else if(parseInt(operation.quantite) > parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    }else if(parseInt(this.ancienOperation.quantite) > parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       qMax = nouvelleOperation.quantite;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                     }
 
                     //on met a jour la nouvelle vente
-                    indexOperation = index;
-                    operations[index] = nouvelleOperation;
+                    //indexOperation = index;
+                    //operations[index] = nouvelleOperation;
+                    this.gestionService.updateDoc(nouvelleOperation);
                    
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                   // produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
-                      if(prod.id === nouvelleOperation.code_produit){
+                    //produits.forEach((prod, index) => {
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           if(qMax <= this.boutique.solde_caisse){
-                            produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nq);
+                            this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
                             estOk = true;
+                            this.gestionService.updateDoc(this.selectedProduit);
                           } 
                   
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
-                    });
+                    //});
 
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_caisse)){
@@ -1077,29 +1121,31 @@ export class ModifierOperationPage {
                 }else{
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
+                    //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(prod.id === this.ancienOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
-                          produits[index].quantite = parseInt(produits[index].quantite) + parseInt(this.ancienOperation.quantite);
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(prod.id === nouvelleOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
                         if(parseInt(this.boutique.solde_caisse) >= parseInt(nouvelleOperation.quantite)){
-                          produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nouvelleOperation.quantite);
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
                           estOk = true
-                        }
+                          this.gestionService.updateDoc(this.selectedProduit);
+                       }
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
-                      }
-                    });
+                     }
+                    //});
                     
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_caisse)){
@@ -1121,8 +1167,8 @@ export class ModifierOperationPage {
                 }
 
                 if(estOk){
-                  boutique.operations = operations;
-                  boutique.produits = produits;
+                  //boutique.operations = operations;
+                  //boutique.produits = produits;
                   this.gestionService.updateBoutique(boutique);
 
                   toast = this.toastCtl.create({
@@ -1148,47 +1194,49 @@ export class ModifierOperationPage {
                 alert.present();
                 }
                     
-              }
-            });
+              //}
+            //});
             break;
            case 'LOCATION':
-            operations.forEach((operation, index) => {
-              if(operation.id === nouvelleOperation.id){
+            //operations.forEach((operation, index) => {
+              //if(operation.id === nouvelleOperation.id){
                 //cas du meme produit
                 if(nouvelleOperation.code_produit === this.ancienOperation.code_produit){
                   //cas d'une augmentation de la quantité du produit
-                    if(parseInt(operation.quantite) < parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    if(parseInt(this.ancienOperation.quantite) < parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       qMax = nq;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                       //cas d'une duminition de la quantité du produit
-                    }else if(parseInt(operation.quantite) > parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    }else if(parseInt(this.ancienOperation.quantite) > parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       qMax = nouvelleOperation.quantite;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                     }
 
                     //on met a jour la nouvelle vente
-                    indexOperation = index;
-                    operations[index] = nouvelleOperation;
+                    //indexOperation = index;
+                    //operations[index] = nouvelleOperation;
+                    this.gestionService.updateDoc(nouvelleOperation);
                    
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
-                      if(prod.id === nouvelleOperation.code_produit){
+                   // produits.forEach((prod, index) => {
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
-                          if(qMax <= produits[index].quantite){
-                            produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nq);
+                          if(qMax <= this.selectedProduit.quantite){
+                            this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
                             estOk = true;
+                            this.gestionService.updateDoc(this.selectedProduit);
                           } 
                   
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
-                    });
+                   // });
 
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_caisse)){
@@ -1200,30 +1248,32 @@ export class ModifierOperationPage {
                 }else{
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
    
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
+                    //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(prod.id === this.ancienOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
-                          produits[index].quantite = parseInt(produits[index].quantite) + parseInt(this.ancienOperation.quantite);
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
                          
                       //metre a jour la quantite du nouveau produit achete
-                      if(prod.id === nouvelleOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
-                        if(parseInt(produits[index].quantite) >= parseInt(nouvelleOperation.quantite)){
-                          produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nouvelleOperation.quantite);
+                        if(parseInt(this.selectedProduit.quantite) >= parseInt(nouvelleOperation.quantite)){
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
                           estOk = true
+                          this.gestionService.updateDoc(this.selectedProduit);
                         }
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
                       }
-                    });
+                    //});
                     
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_caisse)){
@@ -1236,8 +1286,8 @@ export class ModifierOperationPage {
                 }
 
                 if(estOk){
-                  boutique.operations = operations;
-                  boutique.produits = produits;
+                  //boutique.operations = operations;
+                  //boutique.produits = produits;
                   this.gestionService.updateBoutique(boutique);
 
                   toast = this.toastCtl.create({
@@ -1263,39 +1313,41 @@ export class ModifierOperationPage {
                 alert.present();
                 }
                     
-              }
-            });
+              //}
+            //});
             break;
           case 'RETOUR LOCATION':
-            operations.forEach((operation, index) => {
-              if(operation.id === nouvelleOperation.id){
+            //operations.forEach((operation, index) => {
+              //if(operation.id === nouvelleOperation.id){
                 //cas du meme produit
                 if(nouvelleOperation.code_produit === this.ancienOperation.code_produit){
                   //cas d'une augmentation de la quantité du produit
-                    if(parseInt(operation.quantite) < parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    if(parseInt(this.ancienOperation.quantite) < parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       //qMax = nq;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                       //cas d'une duminition de la quantité du produit
-                    }else if(parseInt(operation.quantite) > parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    }else if(parseInt(this.ancienOperation.quantite) > parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       //qMax = nouvelleOperation.quantite;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                     }
 
                     //on met a jour la nouvelle vente
-                    indexOperation = index;
-                    operations[index] = nouvelleOperation;
+                    //indexOperation = index;
+                    //operations[index] = nouvelleOperation;
+                    this.gestionService.updateDoc(nouvelleOperation);
                    
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
-                      if(prod.id === nouvelleOperation.code_produit){
+                   // produits.forEach((prod, index) => {
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           //if(qMax <= produits[index].quantite){
-                            produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nq);
+                            this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
+                            this.gestionService.updateDoc(this.selectedProduit);
                            // estOk = true;
                           //} 
                   
@@ -1303,7 +1355,7 @@ export class ModifierOperationPage {
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
-                    });
+                    //});
 
                     //on met a jour le solde de la caisse
                     /*if(parseInt(boutique.solde_caisse)){
@@ -1315,31 +1367,34 @@ export class ModifierOperationPage {
                 }else{
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
+                    //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(prod.id === this.ancienOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
-                          produits[index].quantite = parseInt(produits[index].quantite) + parseInt(this.ancienOperation.quantite);
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(prod.id === nouvelleOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
-                        if(parseInt(produits[index].quantite) >= parseInt(nouvelleOperation.quantite)){
-                          produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nouvelleOperation.quantite);
+                        if(parseInt(this.selectedProduit.quantite) >= parseInt(nouvelleOperation.quantite)){
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
                           //estOk = true
+                          this.gestionService.updateDoc(this.selectedProduit);
                         }
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
                       }
-                    });
+                    //});
                     
                     //on met a jour le solde de la caisse
+
                     /*if(parseInt(boutique.solde_caisse)){
                       boutique.solde_caisse = parseInt(boutique.solde_caisse) - parseInt(this.ancienOperation.montant_total);
                       boutique.solde_caisse = parseInt(boutique.solde_caisse) + parseInt(nouvelleOperation.montant_total);
@@ -1350,8 +1405,8 @@ export class ModifierOperationPage {
                 }
 
                 if(estOk){
-                  boutique.operations = operations;
-                  boutique.produits = produits;
+                  //boutique.operations = operations;
+                  //boutique.produits = produits;
                   this.gestionService.updateBoutique(boutique);
 
                   toast = this.toastCtl.create({
@@ -1377,39 +1432,41 @@ export class ModifierOperationPage {
                 alert.present();
                 }
                     
-              }
-            });
+              //}
+            //});
             break;
            case 'SUBVENTION':
-            operations.forEach((operation, index) => {
-              if(operation.id === nouvelleOperation.id){
+            //operations.forEach((operation, index) => {
+              //if(operation.id === nouvelleOperation.id){
                 //cas du meme produit
                 if(nouvelleOperation.code_produit === this.ancienOperation.code_produit){
                   //cas d'une augmentation de la quantité du produit
-                    if(parseInt(operation.quantite) < parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    if(parseInt(this.ancienOperation.quantite) < parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       //qMax = nq;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                       //cas d'une duminition de la quantité du produit
-                    }else if(parseInt(operation.quantite) > parseInt(nouvelleOperation.quantite)){
-                      nq = parseInt(nouvelleOperation.quantite) - parseInt(operation.quantite);
+                    }else if(parseInt(this.ancienOperation.quantite) > parseInt(nouvelleOperation.quantite)){
+                      nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
                       //qMax = nouvelleOperation.quantite;
-                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(operation.montant_total);
+                      nm = parseInt(nouvelleOperation.montant_total) - parseInt(this.ancienOperation.montant_total);
                     }
 
                     //on met a jour la nouvelle vente
-                    indexOperation = index;
-                    operations[index] = nouvelleOperation;
+                    //indexOperation = index;
+                    //operations[index] = nouvelleOperation;
+                    this.gestionService.updateDoc(nouvelleOperation);
                    
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
-                      if(prod.id === nouvelleOperation.code_produit){
+                    //produits.forEach((prod, index) => {
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           //if(qMax <= produits[index].quantite){
-                            produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nq);
+                            this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
+                            this.gestionService.updateDoc(this.selectedProduit);
                             //estOk = true;
                           //} 
                   
@@ -1417,7 +1474,7 @@ export class ModifierOperationPage {
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
-                    });
+                   // });
 
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_tresor)){
@@ -1429,29 +1486,31 @@ export class ModifierOperationPage {
                 }else{
 
                     //on met a jour la quantite du produit
-                    produits = data.produits
+                    //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
-                    produits.forEach((prod, index) => {
+                    //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(prod.id === this.ancienOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
-                          produits[index].quantite = parseInt(produits[index].quantite) + parseInt(this.ancienOperation.quantite);
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
                         }
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(prod.id === nouvelleOperation.code_produit){
+                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
-                        if(parseInt(produits[index].quantite) >= parseInt(nouvelleOperation.quantite)){
-                          produits[index].quantite = parseInt(produits[index].quantite) - parseInt(nouvelleOperation.quantite);
+                        if(parseInt(this.selectedProduit.quantite) >= parseInt(nouvelleOperation.quantite)){
+                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
+                          this.gestionService.updateDoc(this.selectedProduit);
                          // estOk = true
                         }
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
                       }
-                    });
+                    //});
                     
                     //on met a jour le solde de la caisse
                     if(parseInt(boutique.solde_tresor)){
@@ -1463,8 +1522,8 @@ export class ModifierOperationPage {
                     }
                 }
 
-                  boutique.operations = operations;
-                  boutique.produits = produits;
+                  //boutique.operations = operations;
+                  //boutique.produits = produits;
                   this.gestionService.updateBoutique(boutique);
 
                   toast = this.toastCtl.create({
@@ -1474,8 +1533,8 @@ export class ModifierOperationPage {
                   });
                   toast.present();
                   this.navCtrl.pop();                    
-              }
-            });
+             // }
+           // });
             break;
          }
          //ventes.forEach((vente, index) => {         

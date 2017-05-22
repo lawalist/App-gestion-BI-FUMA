@@ -24,6 +24,8 @@ export class ModifierTypeProduitPage {
 
     this.typeProduit = this.formBuilder.group({
       nom: [this.ancienTypeProduit.nom, Validators.required],
+      created_at: [this.ancienTypeProduit.created_at],
+      created_by: [this.ancienTypeProduit.created_by],
     });
   }
 

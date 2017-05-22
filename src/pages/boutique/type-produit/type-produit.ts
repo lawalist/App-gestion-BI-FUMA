@@ -23,23 +23,23 @@ export class TypeProduitPage {
   constructor(public toastCtl: ToastController, public gestionService: GestionBoutique, public alertCtl: AlertController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams) {}
 
   
-  ionViewDidLoad() {
+  /*ionViewDidLoad() {
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          this.typeProduits = data.type_produits;
          this.boutique_id = id;
        });
     });
-  }
+  }*/
   
-  ionViewWillEnter(){
+  /*ionViewWillEnter(){
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
          this.typeProduits = data.type_produits;
          this.boutique_id = id;
        });
     });
-  }
+  }*/
 
    ionViewDidEnter(){
     this.storage.get('boutique_id').then((id) => {

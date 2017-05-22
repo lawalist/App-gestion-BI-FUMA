@@ -23,12 +23,12 @@
 
     <ion-item>
       <ion-label floating>Type boutique <span class="error-box">*</span></ion-label>
-      <ion-select formControlName="type" cancelText="Annuler" okText="Ok">
+      <ion-select formControlName="type_boutique" cancelText="Annuler" okText="Ok">
         <ion-option value="" selected disabled>Selectionnez un type</ion-option>
         <ion-option *ngFor="let type of types" [value]=type >{{type}}</ion-option>
       </ion-select>
     </ion-item>
-    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['type'].hasError('required') && boutique.controls['type'].touched">* Le type de la boutique est obligatoir!</div>
+    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['type_boutique'].hasError('required') && boutique.controls['type_boutique'].touched">* Le type de la boutique est obligatoir!</div>
 
     <ion-item>
       <ion-label floating>Nom boutique</ion-label>

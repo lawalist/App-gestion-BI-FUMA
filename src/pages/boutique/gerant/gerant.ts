@@ -42,14 +42,18 @@ export class GerantPage {
 
    ionViewWillEnter(){
     this.storage.get('boutique_id').then((bID) => {
-       this.gestionService.getPlageDocs(bID + ':gerant', bID + 'gerant:\ufff0').then((data) => {
+       this.gestionService.getPlageDocs(bID + ':gerant', bID + ':gerant:\ufff0').then((data) => {
          this.gerants = data;
          this.allGeranrs = data;
          this.boutique_id = bID;
-         if(data.length > 0){ 
-            this.last_id = data[0]._id;
-            this.last_id = this.last_id.substr(this.last_id.length - 3, this.last_id.length -1);
-         }
+         this.gestionService.getPlageDocs(bID + ':gerant', bID + ':gerant:\ufff0', 'ajout').then((tous) => {
+          if(tous.length > 0){ 
+            //this.last_id = data[0]._id;
+            //this.last_id = this.last_id.substr(this.last_id.length - 3, this.last_id.length -1);
+            this.last_id = tous.length;
+          }
+         });
+         
        });
     });
   }

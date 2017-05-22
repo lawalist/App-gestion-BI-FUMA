@@ -21,7 +21,7 @@ import { RegisterPage } from '../register/register';
 export class OperationsPage {
 
   operations: any = [] ;
-  last_id = 0;
+  last_id : string = '1';
   produits: any = [];
   boutique_id: any;
   allOperation: any = [];
@@ -47,30 +47,26 @@ export class OperationsPage {
 
     this.operations = operations;
     //this.operations.reverse();
-    this.operations.sort((a, b) => {
+    /*this.operations.sort((a, b) => {
       return b.id - a.id;
-    });
+    });*/
   }
 
-  ionViewDidEnter(){
+  ionViewWillEnter(){
     /*let loading  = this.loadCtl.create({
       content: 'Chatgement en cours...'
     });
     loading.present();*/
     this.storage.get('boutique_id').then((id) => {
       if(id){
-        this.gestionService.getBoutiqueById(id).then((data) => {
-         
-         if(data.operations.length > 0){
-            this.last_id = parseInt(data.operations[data.operations.length - 1].id);
-            
-            let operations: any = [];
-            this.allOperation = data.operations;
+        this.gestionService.getPlageDocs(id+ ':operation', id +':operation:\ufff0').then((res) => {
+           let operations: any = [];
+            this.allOperation = res;
             
             if(this.selectedTypeOperation == 'TOUS'){
               operations = this.allOperation;
             }else{
-               data.operations.forEach((op, index) => {
+               this.allOperation.forEach((op, index) => {
                 if(op.type === this.selectedTypeOperation){
                   operations.push(op);
                 }
@@ -78,19 +74,36 @@ export class OperationsPage {
             }
            
             this.operations = operations;
-
-         }
-
-         //this.operations.reverse();
-         this.operations.sort((a, b) => {
+        this.operations.sort((a, b) => {
            return b.id - a.id;
          });
 
          this.boutique_id = id;
+         this.gestionService.getPlageDocs(id+ ':operation', id +':operation:\ufff0', 'ajout').then((tous) => {
+            if(tous.length > 0){
+            let tempID = tous.length;
+            tempID++;
+            this.last_id = tempID;
+            //this.last_id = res[ res.length -1]._id;
+            //this.last_id = this.last_id.substr(0, this.last_id.length -12)
+            //this.last_id = this.last_id.substr(this.last_id.lastIndexOf(':') + 1)
+            //this.last_id = this.last_id.substr(0, this.last_id.length -11)
+            //let tempID = parseInt(this.last_id);
+            //tempID++;
+            //this.last_id = tempID.toString();
 
-         this.produits = data.produits;
+            //let tem = this.last_id.lastIndexOf(':');
+            //this.last_id = tem.toString();
 
-         this.last_id++;
+          }
+         });
+         
+
+         //this.operations.reverse();
+
+         //this.produits = data.produits;
+
+        // this.last_id++;
          //loading.dismissAll();
        }, error => {
          //loading.dismissAll();
@@ -111,6 +124,10 @@ export class OperationsPage {
 
           alert.present()
        } );
+
+       this.gestionService.getPlageDocs(id+ ':produit', id +':produit:\ufff0').then((res) => {
+          this.produits = res
+       }, err => console.log(err));
       }else{
 
       }

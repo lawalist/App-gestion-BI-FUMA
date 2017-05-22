@@ -34,12 +34,15 @@ export class ModifierGerantPage {
     this.gerant = this.formBuilder.group({
       _id: [this.anciengerant._id, Validators.required],
       _rev: [this.anciengerant._rev],
+      type: [this.anciengerant.type],
       nom: [this.anciengerant.nom, Validators.required],
       //prenom: [this.anciengerant.prenom, Validators.required],
       status: [this.anciengerant.status, Validators.required],
       date_debut_fonction: [this.anciengerant.date_debut_fonction],
       date_fin_fonction: [this.anciengerant.date_fin_fonction],
-      raison: [this.anciengerant.raison]
+      raison: [this.anciengerant.raison],
+      created_at: [this.anciengerant.created_at],
+      created_by: [this.anciengerant.created_by],
     });
 
   }

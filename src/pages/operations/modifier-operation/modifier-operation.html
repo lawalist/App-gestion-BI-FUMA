@@ -14,6 +14,11 @@
 
 
 <ion-content padding>
+   <ion-card>
+      <ion-card-header>
+        <h2>Edition opération: <strong>{{idOperation}}</strong></h2>
+      </ion-card-header>
+    </ion-card>
  
   <form [formGroup]="operation" (ngSubmit) = "modifier()">
 
@@ -57,7 +62,7 @@
     <ion-col>
       <ion-item>
         <ion-label floating>Prix unitaire (FCFA) <span class="error-box">*</span></ion-label>
-        <ion-input type="number" formControlName="prix_unitaire" [(ngModel)]="selectedProduitPrixUnitaire" (click)="onClickChampsCalculAuto()" ></ion-input>
+        <ion-input type="number" formControlName="prix_unitaire" [(ngModel)]="selectedProduitPrixUnitaire" (click)="onClickChampsCalculAuto()" disabled></ion-input>
       </ion-item>
       <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['prix_unitaire'].hasError('required') && operation.controls['prix_unitaire'].touched">* Le prix unitaire est obligatoir!</div>
     </ion-col>
@@ -75,11 +80,17 @@
     <ion-col>
       <ion-item>
         <ion-label floating>Montant total (FCFA) <span class="error-box">*</span></ion-label>
-        <ion-input type="number" formControlName="montant_total" [(ngModel)]="totalPrix" (click)="onClickChampsCalculAuto()" ></ion-input>
+        <ion-input type="number" formControlName="montant_total" [(ngModel)]="totalPrix" (click)="onClickChampsCalculAuto()" disabled></ion-input>
       </ion-item>
       <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['montant_total'].hasError('required') && operation.controls['montant_total'].touched">* Le montant total est obligatoir!</div>
     </ion-col>
   </ion-row>
+
+  <ion-item>
+    <ion-label floating>Matricule client (pour les membres)</ion-label>
+    <ion-input type="text" formControlName="matricule_client"></ion-input>
+  </ion-item>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['matricule_client'].hasError('required') && operation.controls['matricule_client'].touched">* le matricule du client est obligatoir!</div>
 
   <ion-item>
     <ion-label floating>Nom client</ion-label>

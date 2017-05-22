@@ -44,6 +44,7 @@ export class AjouterGerantPage {
  
     this.gerant = this.formBuilder.group({
       _id: [this.matricule, Validators.required],
+      type: ['gerant'],
       nom: ['', Validators.required],
       //prenom: ['', Validators.required],
       status: ['', Validators.required],

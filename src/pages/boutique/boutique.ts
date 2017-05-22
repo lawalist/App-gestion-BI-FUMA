@@ -33,11 +33,14 @@ export class BoutiquePage {
       if(id){
         this.gestionService.getBoutiqueById(id).then((res) => {
          this.boutique = res;
-         res.gerants.forEach((gerant, index) => {
-           if(gerant.status == 'En fonction'){
-             this.gerant = gerant;
-           }
+         this.gestionService.getPlageDocs(id+ ':gerant', id+ ':gerant:\ufff0').then((gerants) => {
+            gerants.forEach((gerant, index) => {
+            if(gerant.status == 'En fonction'){
+              this.gerant = gerant;
+            }
+          });
          });
+         
          this.boutique_id = id;
        }, error => console.log(error));
       }

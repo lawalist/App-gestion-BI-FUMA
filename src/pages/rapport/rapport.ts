@@ -80,24 +80,24 @@ export class RapportPage {
     this.fileService.save(this.storageDirectory, "export.xls", "application/vnd.ms-excel", table);
   }*/
 
-  ionViewDidEnter(){
+  ionViewWillEnter(){
     let operations: any = [];
     this.storage.get('boutique_id').then((id) => {
-       this.gestionService.getBoutiqueById(id).then((data) => {
+       this.gestionService.getPlageDocs(id+':operation', id+':operation:\ufff0').then((data) => {
          //this.operations = data.operations;
          this.boutique_id = id;
-            this.allOperation = data.operations;
-            this.allTypeOperation = data.operations;
+            this.allOperation = data;
+            this.allTypeOperation = data;
             if(this.selectedTypeOperation == 'TOUS'){
               //this.operations = data.operations;
               this.nomOperation = '';
-              this.allTypeOperation = data.operations;
+              this.allTypeOperation = data;
               this.allTypeOperation.sort((a, b) => {
                 return b.id - a.id;
               });
           
             }else{
-              data.operations.forEach((op, index) => {
+              data.forEach((op, index) => {
                 this.nomOperation = 'des '+ this.selectedTypeOperation + 's';
                 if(op.type === this.selectedTypeOperation){
                   operations.push(op);

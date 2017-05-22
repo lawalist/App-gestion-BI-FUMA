@@ -17,6 +17,7 @@ import { Storage } from '@ionic/storage';
 export class ModifierProduitPage {
 
   produit: any;
+  code_prod: any = '';
   ancienProduit: any;
   selectedUnite: any = '';
   prix_total: any = 0;
@@ -26,6 +27,7 @@ export class ModifierProduitPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public storage: Storage, public toastCtl: ToastController, public gestionService: GestionBoutique) {
     this.ancienProduit = this.navParams.get('produit');
     let boutique_id = this.navParams.data.boutique_id;
+    this.code_prod = this.ancienProduit.code_produit;
     //this.typeProduits = this.navParams.data.typeProduits;
     this.selectedUnite = this.ancienProduit.unite_mesure;
     this.prix_total = this.ancienProduit.prix_total;
@@ -46,12 +48,18 @@ export class ModifierProduitPage {
     this.produit = this.formBuilder.group({
       _id: [this.ancienProduit._id],
       _rev: [this.ancienProduit._rev],
+      type: [this.ancienProduit.type],
       type_produit: [this.ancienProduit.type_produit, Validators.required],
+      code_produit: [this.ancienProduit.code_produit],
       nom_produit: [this.ancienProduit.nom_produit, Validators.required],
       quantite: [this.ancienProduit.quantite, Validators.required],
       unite_mesure: [this.ancienProduit.unite_mesure, Validators.required],
       prix: [this.ancienProduit.prix, Validators.required],
-      prix_total: [this.ancienProduit.prix_total, Validators.required]
+      prix_total: [this.ancienProduit.prix_total, Validators.required],
+      created_at: [this.ancienProduit.created_at],
+      //updatet_at: [this.ancienProduit.updatet_at],
+      created_by: [this.ancienProduit.created_by],
+      //updated_by: [this.ancienProduit.updated_by],
     });
   }
 

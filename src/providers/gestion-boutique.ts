@@ -1,10 +1,10 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http } from '@angular/http';
-import {LoadingController } from 'ionic-angular';
+import {LoadingController, AlertController } from 'ionic-angular';
 import 'rxjs/add/operator/map';
 import { global } from '../global-variables/variable';
 //import PouchDB from 'pouchdb';
-//import { Storage } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 var PouchDB = require("pouchdb");
 PouchDB.plugin(require('pouchdb-authentication'));
 
@@ -28,21 +28,42 @@ export class GestionBoutique {
     skip_setup: true
   };
 
+  options = {
+    live: true,
+    retry: true,
+    continuous: true,
+    //filter: 'mydesign/myfilter'
+    filter: (doc) => {
+      return doc._id.match(/B3[0-9a-zA-Z_:]*/);
+    }
+  }
 
-  constructor(public http: Http, public loadingCtrl: LoadingController) {
+
+  constructor(public http: Http, public loadingCtrl: LoadingController, public alertCtl: AlertController, public storage: Storage) {
     this.db = new PouchDB('stock-fuma');
-    this.db.changes({live: true, since: 'now', include_docs: true}).on('change', (change) => this.listener.emit(this.handleChange(change)));
+    //this.db.changes({live: true, since: 'now', include_docs: true}).on('change', (change) => this.listener.emit(this.handleChange(change)));
     
 
     //this.remote = new PouchDB("http://localhost:5984/stock-fuma", this.pouchOpts);// 'http://localhost:5984/stock-fuma';//
-    this.remote = new PouchDB("http://"+global.ip_serveur+":5984/stock-fuma", this.pouchOpts);
-    let options = {
-      live: true,
-      retry: true,
-      continuous: true
-    }
-     
-    this.db.sync(this.remote, options);
+    /*let optionsSaved = {
+        "auth.username": "admin",
+        "auth.password": "admin"
+    }*/
+
+    this.remote = new PouchDB('http://'+global.ip_serveur+':5984/stock-fuma', this.pouchOpts);
+    //this.remote = 'http://localhost:5984/stock-fuma'; 
+
+    //this.db.sync(this.remote, this.options);
+    this.storage.get('boutique_id').then((id) => {
+      if(id){
+        this.dbSync(id);
+      }
+    });
+  }
+
+  createDataBase(){
+    this.db = new PouchDB('stock-fuma');
+    //this.remote = new PouchDB('http://'+global.ip_serveur+':5984/stock-fuma', this.pouchOpts);
   }
 
   showLoader(msg: any){
@@ -91,19 +112,19 @@ export class GestionBoutique {
         this.loading.dismiss();
         if (err.name === 'unauthorized') {
           alert('nom ou mdpass incorrecte');
-          return 'nom ou mdpass incorrecte';
+          //return 'nom ou mdpass incorrecte';
         } else {
           alert('erreur');
-          return 'erreur';
+          //return 'erreur';
         }
       }else if(response){
         this.loading.dismiss();
         alert('success');
-        return 'success';
+        //return 'success';
       }else{
         this.loading.dismiss();
         alert('echec');
-        return 'echec';
+        //return 'echec';
       }
     });
   }
@@ -202,23 +223,73 @@ export class GestionBoutique {
     });
   }
 
+  dbSync(id){
+    this.db.sync(this.remote, {
+      live: true,
+      retry: true,
+      continuous: true,
+      //filter: 'mydesign/myfilter'
+      filter: (doc) => {
+        return doc._id.match(id+'[0-9a-zA-Z_:]*');
+      }
+    });/*.on('change',  (info) => {
+      // handle change
+    }).on('paused',  (err) => {
+        this.getBoutiqueById(id).then((boutique) => {
+          this.storage.set('boutique_id', boutique._id);
+    
+          global.changerInfoBoutique = false;
+          //this.ionViewDidEnter();
+          //this.navCtrl.viewDidEnter;
+          //this.ionViewDidEnter();
+        });
 
+        //this.ionViewDidEnter();
+      // replication paused (e.g. replication up to date, user went offline)
+    }).on('active',  () => {
+      // replicate resumed (e.g. new changes replicating, user went back online)
+    }).on('denied',  (err) => {
+      alert('Droit insuffissant pour la synchronisation');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('complete',  (info) => {
+      this.getBoutiqueById(id).then((boutique) => {
+          this.storage.set('boutique_id', boutique._id);
+    
+          global.changerInfoBoutique = false;
+          //this.ionViewDidEnter();
+          //this.navCtrl.viewDidEnter;
+          //this.ionViewDidEnter();
+        });
 
-  doSync(){
-    this.db = new PouchDB('stock-fuma');this.db.changes({live: true, since: 'now', include_docs: true}).on('change', (change) => this.listener.emit(this.handleChange(change)));
+        
+      // handle complete
+    }).on('error',  (err) => {
+      alert('Erreur lors de la synchronisation');
+      // handle error
+    });*/
+    
+  }
+
+  /*doSync(){
+    this.db = new PouchDB('stock-fuma');
+    this.db.changes({live: true, since: 'now', include_docs: true}).on('change', (change) => this.listener.emit(this.handleChange(change)));
     //this.remote = new PouchDB("http://localhost:5984/stock-fuma", this.pouchOpts);// 'http://localhost:5984/stock-fuma';
     this.remote = new PouchDB("http://"+global.ip_serveur+":5984/stock-fuma", this.pouchOpts)
-    let options = {
+    /*let options = {
       live: true,
       retry: true,
       continuous: true
-    } 
+    } *
 
-    this.db.sync(this.remote, options);
-  }
+    this.db.sync(this.remote, this.options);
+}*/
 
   getBoutiqueById(id){
     return this.db.get(id);
+  }
+
+  getRemoteBoutiqueById(id){
+    return this.remote.get(id);
   }
 
   getDocById(id){
@@ -227,7 +298,29 @@ export class GestionBoutique {
 
   public checkExists(id: string) {
         return this.getBoutiqueById(id).then(result => {
-            return true
+            if(!result.supprime || result.supprime === false){
+               return true
+            }else{
+               return false
+            }
+        }, error => {
+            //not found error message
+            if (error.status == "404") {
+                return false
+            } else {
+                //other errors
+                return false
+            }
+        });
+    }
+
+    public checkRemoteExists(id: string) {
+        return this.getRemoteBoutiqueById(id).then(result => {
+            if(!result.supprime || result.supprime === false){
+               return true
+            }else{
+               return false
+            }
         }, error => {
             //not found error message
             if (error.status == "404") {
@@ -250,7 +343,7 @@ export class GestionBoutique {
     }
 
 
-  getBoutiques(){
+  getBoutiques(action = ''){
 
     //si non vide
     if(this.data){
@@ -263,7 +356,13 @@ export class GestionBoutique {
       }).then((result) => {
         this.data = [];
         let doc = result.rows.map((row) => {
-          this.data.push(row.doc);
+          if(action === 'ajout'){
+            this.data.push(row.doc);
+          }else{
+            if(!row.doc.supprime || row.doc.supprime === false){
+              this.data.push(row.doc);
+            }
+          }
         });
 
         resolve(this.data);
@@ -273,7 +372,7 @@ export class GestionBoutique {
     } );
   }
 
-  getPlageDocs(startkey, endkey){
+  getPlageDocs(startkey, endkey, action = ''){
 
     //si non vide
     let data: any;
@@ -291,39 +390,84 @@ export class GestionBoutique {
       }).then((result) => {
         data = [];
         let doc = result.rows.map((row) => {
-          data.push(row.doc);
+          if(action === 'ajout'){
+            data.push(row.doc);
+          }else{
+            if(!row.doc.supprime || row.doc.supprime === false){
+              data.push(row.doc);
+            }
+          }
         });
 
         resolve(data);
 
-        this.db.changes({live: true, since: 'now', include_docs: true}).on('change', (change) => this.listener.emit(this.handleChange(change)));
+        this.db.changes({live: true, since: 'now', include_docs: true}).on('change', (change) => this.handleChange(change));
       }).catch((err) => console.log(err));
     } );
   }
 
 
   createBoutique(boutique){
+    let dat = new Date();
+    boutique.created_at = dat.toJSON();
+    boutique.updatet_at = dat.toJSON();
+    boutique.created_by = '';
+    boutique.updated_by = '';
+    boutique.deleted_at = '';
+    boutique.deleted_by = '';
+    boutique.supprime = false;
     this.db.post(boutique);
   }
 
   createDoc(doc){
+    let dat = new Date();
+    doc.created_at = dat.toJSON();
+    doc.updatet_at = dat.toJSON();
+    doc.created_by = '';
+    doc.updated_by = '';
+    doc.deleted_at = '';
+    doc.deleted_by = '';
+    doc.supprime = false;
     this.db.put(doc);
   }
 
   updateBoutique(boutique){
+    let dat = new Date();
+    boutique.updatet_at = dat.toJSON();
+    boutique.updated_by = '';
+    boutique.deleted_at = '';
+    boutique.deleted_by = '';
+    boutique.supprime = false;
     this.db.put(boutique).catch((err) => console.log(err));
   }
 
   updateDoc(doc){
+    let dat = new Date();
+    doc.updatet_at = dat.toJSON();
+    doc.updated_by = '';
+    doc.deleted_at = '';
+    doc.deleted_by = '';
+    doc.supprime = false;
     this.db.put(doc).catch((err) => console.log(err));
   }
 
   deleteBoutique(boutique){
-    this.db.remove(boutique).catch((err) => console.log(err));
+    let dat = new Date();
+    boutique.deleted_at = dat.toJSON();
+    boutique.deleted_by = '';
+    boutique.supprime = true;
+    this.db.put(boutique).catch((err) => console.log(err));
+    //this.db.remove(boutique).catch((err) => console.log(err));
   }
 
   deleteDoc(doc){
-    this.db.remove(doc).catch((err) => console.log(err));
+    let dat = new Date();
+    doc.deleted_at = dat.toJSON();
+    doc.deleted_by = '';
+    //doc._deleted = true;
+    doc.supprime = true;
+    //this.db.remove(doc).catch((err) => console.log(err));
+    this.db.put(doc).catch((err) => console.log(err));
   }
 
   handleChange(change){

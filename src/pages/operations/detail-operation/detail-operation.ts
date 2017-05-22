@@ -16,17 +16,19 @@ import { GestionBoutique } from '../../../providers/gestion-boutique';
   templateUrl: 'detail-operation.html'
 })
 export class DetailOperationPage {
-
+ 
   operation:any;
   boutique_id: any;
+  idOperation: any = '';
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtl: AlertController, public gestionService: GestionBoutique) {
     this.operation = this.navParams.get('operation');
+    this.idOperation = this.operation._id.substr(this.operation._id.lastIndexOf(':') + 1)
     this.boutique_id = this.navParams.data.boutique_id;
   }
 
-  ionViewDidEnter(){
-    this.gestionService.getBoutiqueById(this.boutique_id).then((res) => {
+  ionViewWillEnter(){
+    /*this.gestionService.getBoutiqueById(this.boutique_id).then((res) => {
       //let v = res.ventes;
       let op = res.operations;
       //v.forEach((vent, index) => {
@@ -35,7 +37,12 @@ export class DetailOperationPage {
           this.operation = operation;
         }
       });
-    });
+    });*/
+
+    this.gestionService.getDocById(this.operation._id).then((operation) => {
+      this.operation = operation;
+      this.idOperation = this.operation._id.substr(this.operation._id.lastIndexOf(':') + 1)
+    })
   }
   
   ionViewDidLoad() {
@@ -59,7 +66,7 @@ export class DetailOperationPage {
           text: 'Confirmer',
           handler: () => {
 
-            this.gestionService.getBoutiqueById(this.boutique_id).then((result) => {
+            /*this.gestionService.getBoutiqueById(this.boutique_id).then((result) => {
               let boutique = result;
               let operations = result.operations;
               operations.forEach((op, index) => {
@@ -69,7 +76,9 @@ export class DetailOperationPage {
               });
               boutique.operations = operations;
               this.gestionService.updateBoutique(boutique);
-            })
+            })*/
+
+            this.gestionService.deleteDoc(operation);
             this.navCtrl.pop();
           }
         }

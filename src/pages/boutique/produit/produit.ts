@@ -19,7 +19,7 @@ export class ProduitPage {
 
   produits: any = [];
   typeProduits: any = [];
-  last_id = 0;
+  last_id : string = '0';
   boutique_id: any;
 
   constructor(public gestionService: GestionBoutique, public alertCtl: AlertController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams) {}
@@ -27,17 +27,21 @@ export class ProduitPage {
   ionViewWillEnter(){
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getPlageDocs(id + ':produit', id+ ':produit:\ufff0').then((produits) => {
-
-         if(produits.length > 0){
-            this.last_id = produits[produits.length - 1].id;
-         }
-
-         this.produits = produits.reverse();
+         this.produits = produits;//.reverse();
          //this.typeProduits = data.type_produits;
          this.boutique_id = id;
+         this.gestionService.getPlageDocs(id + ':produit', id+ ':produit:\ufff0', 'ajout').then((tous) => {
+          if(tous.length){
+            //this.last_id = produits[0]._id;
 
-         this.last_id++;
-
+            //this.last_id = this.last_id.substr(this.last_id.length - 3, this.last_id.length -1);
+            //let tempID = produits.length;
+            //tempID++;
+            this.last_id = tous.length;
+            //this.last_id = '0';
+          }
+         });
+          
        });
     });
   }
