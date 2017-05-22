@@ -1,0 +1,63 @@
+<!--
+  Generated template for the ModifierProfile page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>modifier-profile</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-row  class="login-logo">
+      <ion-col><img src="assets/img/fuma_gaskiya_logo.png"></ion-col>
+    </ion-row>
+    
+  <ion-row class="account-form">
+    <ion-col>
+      <form [formGroup]="registerForm" (ngSubmit) = "modifier()">
+      <!--ion-list inset-->
+ 
+        <ion-item>
+          <ion-label><ion-icon name="person"></ion-icon></ion-label>
+          <!--ion-input [(ngModel)]="nom" placeholder="Nom" type="text"></ion-input-->
+          <ion-input type="text" formControlName="nom" placeholder="Nom complet"></ion-input>
+        </ion-item>
+        <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['nom'].hasError('required') && registerForm.controls['nom'].touched">* le nom est obligatoir!</div>
+ 
+        <ion-item>
+          <ion-label><ion-icon name="mail"></ion-icon></ion-label>
+          <!--ion-input [(ngModel)]="email" placeholder="Email" type="email"></ion-input-->
+          <ion-input type="Email" formControlName="email" placeholder="E-mail"></ion-input>
+        </ion-item>
+        <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['email'].hasError('required') && registerForm.controls['email'].touched">* l'email est obligatoir!</div>
+ 
+        <ion-item>
+          <ion-label floating>Sex<span class="error-box">*</span></ion-label>
+          <ion-select formControlName="sex" cancelText="Annuler" okText="Ok">
+            <ion-option value="" selected disabled>Selectionnez un sex</ion-option>
+            <ion-option value="H" >H</ion-option>
+            <ion-option value="F" >F</ion-option>
+          </ion-select>
+        </ion-item>
+        <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['sex'].hasError('required') && registerForm.controls['sex'].touched">* le sex est obligatoir!</div>
+  
+        <ion-item>
+          <ion-label floating>Date Enrégistrement<span class="error-box">*</span></ion-label>
+          <ion-datetime displayFormat="DD/MM/YYYY" formControlName="date" cancelText="Annuler" doneText="Valider"></ion-datetime>
+        </ion-item>
+        <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['date'].hasError('required') && registerForm.controls['date'].touched">* la date d'enrégistrement est obligatoir!</div>
+      <!--/ion-list-->
+ 
+      <!--button ion-button (click)="register()" color="secondary" class="continue-button" [disabled]="!username || !mdpass || !confmdpass">S'enrégistrer</button-->
+      <br>
+      <button ion-button type="submit" [disabled]="!registerForm.valid" color="secondary" class="continue-button" block>S'enrégistrer</button>
+    </form>
+    </ion-col>
+  </ion-row>
+</ion-content>

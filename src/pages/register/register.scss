@@ -1,0 +1,81 @@
+page-register {
+    /*.scroll-content {
+        //background-color: map-get($colors, secondary);
+        display: flex;
+        flex-direction: column;
+      }*/
+
+      ion-row {
+        align-items: center;
+        text-align: center;
+      }/*
+ 
+      ion-item {
+          border-radius: 30px !important;
+          padding-left: 10px !important;
+          margin-bottom: 10px;
+          background-color: #f6f6f6;
+          opacity: 0.7;
+          font-size: 0.9em;
+      }*/
+      
+      .create-account {
+        color:seagreen;
+        text-decoration: underline;
+        background: none;
+      }
+      
+      /*ion-list {
+          margin: 0;
+      }
+ 
+ 
+      ion-item {
+          border-radius: 30px !important;
+          padding-left: 10px !important;
+          margin-bottom: 10px;
+          background-color: #f6f6f6;
+          opacity: 0.7;
+          font-size: 0.9em;
+      }
+ 
+      ion-list {
+          margin: 0;
+      }
+ 
+      .heading-text {
+        flex: 1;
+        align-items: center;
+        text-align: center;
+      }
+ 
+      .heading-text h3 {
+        color: #fff;
+      }
+ 
+ 
+      .account-form {
+          flex: 1;
+      }
+      
+      .login-logo {
+        flex: 2;
+      }
+
+      .continue-button {
+          width: 100%;
+          border-radius: 30px;
+         // margin-top: 10px;
+          font-size: 0.9em;
+          background-color: map-get($colors, secondary);
+          border: 1px solid map-get($colors, secondary);
+      }*/
+      
+    .error-box {
+        color: red;
+    }
+     
+    .error-border {
+        color: red;
+    }
+}

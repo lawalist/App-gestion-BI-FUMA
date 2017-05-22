@@ -19,6 +19,7 @@ import { testQuantite, testQuantitePositive } from '../../../monValidator/monVal
 
 export class AjouterOperationPage {
   operation: any;
+  nomProduit: any = '';
   produits: any;
   toast: any = '';
   tousProduits: any;
@@ -45,8 +46,8 @@ export class AjouterOperationPage {
   },];
 
   produitDecaissement: any = [{
-      "_id": 'produit:999',
-      "type_produit": "produit:Argent",
+      "_id": 'B:produit:AG999',
+      "type_produit": "Argent",
       "nom_produit": "Argent",
       "quantite": 0,
       "prix": "1",
@@ -83,6 +84,7 @@ export class AjouterOperationPage {
         //type_produit: ['', Validators.required],
         type_produit: ['', Validators.required],
         code_produit: ['', Validators.required],
+        nom_produit: ['', Validators.required],
         unite: [''],
         quantite: [this.quantiteMax, Validators.compose([Validators.required])],
         prix_unitaire: [this.selectedProduit.prix, Validators.required],
@@ -104,6 +106,7 @@ export class AjouterOperationPage {
         //type_produit: ['', Validators.required],
         type_produit: ['', Validators.required],
         code_produit: ['', Validators.required],
+        nom_produit: ['', Validators.required],
         unite: [''],
         quantite: [this.quantiteMax, Validators.compose([Validators.required])],
         prix_unitaire: [this.prixUnitaire, Validators.required],
@@ -127,6 +130,7 @@ export class AjouterOperationPage {
 
        this.gestionService.getPlageDocs(id + ':produit', id + ':produit:\ufff0').then((data) => {
          this.tousProduits = data;
+         this.produits = data;
        });
 
       /* this.gestionService.getBoutiqueById(id).then((data) => {
@@ -161,6 +165,8 @@ export class AjouterOperationPage {
   ionChange(){
     this.textQuantite = 'Quantité (' + this.selectedProduit.unite_mesure +')';
     this.selectedProduitPrixUnitaire = this.selectedProduit.prix;
+    this.selectedTypeProduit = this.selectedProduit.type_produit;
+    this.nomProduit = this.selectedProduit.nom_produit;
     let op = this.operation.value;
   
     switch (op.type){
@@ -504,6 +510,7 @@ export class AjouterOperationPage {
 
          //charger les informations concernant le produit
          op.code_produit = this.selectedProduit.code_produit;
+         op.type_produit = this.selectedProduit.type_produit;
          op.nom_produit = this.selectedProduit.nom_produit;
          op.unite = this.selectedProduit.unite_mesure;
 
