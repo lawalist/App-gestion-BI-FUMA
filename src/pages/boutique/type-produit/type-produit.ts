@@ -4,6 +4,9 @@ import { AjouterTypeProduitPage } from './ajouter-type-produit/ajouter-type-prod
 import { GestionBoutique } from '../../../providers/gestion-boutique';
 import { Storage } from '@ionic/storage';
 import { ModifierTypeProduitPage } from './modifier-type-produit/modifier-type-produit';
+import { DetailTypeProduitPage } from './detail-type-produit/detail-type-produit';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../global-variables/variable';
  
 /*
   Generated class for the TypeProduit page.
@@ -20,7 +23,9 @@ export class TypeProduitPage {
   typeProduits: any = [];
   boutique_id: any;
 
-  constructor(public toastCtl: ToastController, public gestionService: GestionBoutique, public alertCtl: AlertController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams) {}
+  constructor(public translate: TranslateService, public toastCtl: ToastController, public gestionService: GestionBoutique, public alertCtl: AlertController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams) {
+    this.translate.setDefaultLang(global.langue);
+  }
 
   
   /*ionViewDidLoad() {
@@ -32,6 +37,10 @@ export class TypeProduitPage {
     });
   }*/
   
+  ionViewWillEnter(){
+    this.translate.setDefaultLang(global.langue);
+  }
+
   /*ionViewWillEnter(){
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getBoutiqueById(id).then((data) => {
@@ -71,6 +80,10 @@ export class TypeProduitPage {
 
   editer(typeProduit){
     this.navCtrl.push(ModifierTypeProduitPage, {'typeProduit': typeProduit});
+  }
+
+  detail(typeProduit){
+    this.navCtrl.push(DetailTypeProduitPage, {'typeProduit': typeProduit, 'boutique_id': this.boutique_id})
   }
 
   supprimer(typeProduit){

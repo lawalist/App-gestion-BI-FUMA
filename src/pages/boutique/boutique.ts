@@ -5,7 +5,10 @@ import { AjouterBoutiquePage } from './ajouter-boutique/ajouter-boutique';
 import { Storage } from '@ionic/storage';
 import { ModifierBoutiquePage } from './modifier-boutique/modifier-boutique';
 import { ProduitPage } from '../boutique/produit/produit';
+import { TypeProduitPage } from '../boutique/type-produit/type-produit';
 import { GerantPage } from '../boutique/gerant/gerant';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../global-variables/variable';
 
 /*
   Generated class for the Boutique page.
@@ -22,12 +25,14 @@ export class BoutiquePage {
   boutique_id = '';
   boutique: any = {};
   gerant: any;
+  tacheAdmin = global.tacheAdmin;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public gestionService: GestionBoutique, public storage: Storage) {
-    
+  constructor(public translate: TranslateService, public navCtrl: NavController, public navParams: NavParams, public gestionService: GestionBoutique, public storage: Storage) {
+    this.translate.setDefaultLang(global.langue);
   }
 
   ionViewWillEnter(){
+    this.translate.use(global.langue);
     this.storage.get('boutique_id').then((id) => {
       this.boutique_id = id;
       if(id){
@@ -81,5 +86,9 @@ export class BoutiquePage {
 
   gestionProduits(){
     this.navCtrl.push(ProduitPage);
+  }
+
+  gestionTypeProduits(){
+    this.navCtrl.push(TypeProduitPage);
   } 
 }

@@ -7,50 +7,56 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>admin</ion-title>
+    <ion-title>{{'ADMIN' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+
+  <ion-card (click)="langue()">
+    <ion-item style="text-align: center">{{'LANGUE' | translate}}
+    </ion-item>
+  </ion-card>
+
   <ion-card (click)="ipServeur()">
-    <ion-item style="text-align: center">Configuration serveur
+    <ion-item style="text-align: center">{{'CONFIGURATIONSERVEUR' | translate}}
     </ion-item>
   </ion-card>
 
   <ion-card (click)="detailBoutique()">
-    <ion-item style="text-align: center">Détail boutique
+    <ion-item style="text-align: center">{{'DETAILBOUTIQUE' | translate}}
     </ion-item>
   </ion-card>
 
   <ion-card (click)="changerBoutique()">
-    <ion-item style="text-align: center">Changer boutique
+    <ion-item style="text-align: center">{{'CHANGERBOUTIQUE' | translate}}
     </ion-item>
   </ion-card>
 
   <ion-card (click)="ajouterBoutique()">
-    <ion-item style="text-align: center">Ajouter boutique
+    <ion-item style="text-align: center">{{'AJOUTERBOUTIQUE' | translate}}
     </ion-item>
   </ion-card>
 
-  <ion-card (click)="gestionGerants()">
+  <!--ion-card (click)="gestionGerants()">
     <ion-item style="text-align: center">Gestion gérants
     </ion-item>
-  </ion-card>
+  </ion-card-->
 
   <ion-card (click)="gestionTypeProduits()">
-    <ion-item style="text-align: center">Gestion types produits
+    <ion-item style="text-align: center">{{'GESTIONTYPEPRODUITS' | translate}}
     </ion-item>
   </ion-card>
 
-  <ion-card (click)="gestionProduits()">
+  <!--ion-card (click)="gestionProduits()">
     <ion-item style="text-align: center">Gestion produits
     </ion-item>
-  </ion-card>
+  </ion-card-->
 
   <ion-card (click)="reset()">
-    <ion-item style="text-align: center; background-color: red; background: red"><strong>Réinitialiser la boutique</strong>
+    <ion-item style="text-align: center; background-color: red; background: red"><strong>{{'REINITIALISERBOUTIQUE' | translate}}</strong>
     </ion-item>
   </ion-card>
 </ion-content>

@@ -1,27 +1,17 @@
 <!--
-  Generated template for the Accueil page.
+  Generated template for the Langue page.
 
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<!--ion-header>
+<ion-header>
 
-  <ion-navbar>
-    <ion-title>accueil</ion-title>
+  <ion-navbar class="img-container">
+    <ion-title>{{'LANGUE' | translate}}</ion-title>
   </ion-navbar>
 
-</ion-header-->
-
-
+</ion-header>
 <ion-content padding>
-  <div class="img-container">
-    <img src="assets/img/fuma_gaskiya_logo.png">
-  </div>
-  <p>{{ 'BIENVENUE1' | translate }}</p>
-  <br>
-  <p>{{ 'BIENVENUE2' | translate }}</p>
-  <br>
-  
   <ion-list>
     <ion-item>
       <ion-label floating>{{'CHOIXLANGUE' | translate}}</ion-label>
@@ -38,5 +28,4 @@
       </ion-select>
     </ion-item>
   </ion-list>
-  <button ion-button type="submit" color="fuma-green-dark" (click)="open()" block icon-right>{{'COMMENCER' | translate}} <ion-icon name="play"></ion-icon></button>
 </ion-content>

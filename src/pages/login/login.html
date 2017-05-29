@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>Connexion</ion-title>
+    <ion-title>{{'CONNEXION' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -27,29 +27,35 @@
         <ion-item>
           <ion-label><ion-icon name="person" class="error-box"></ion-icon></ion-label>
           <!--ion-input [(ngModel)]="username" placeholder="nom utilisateur " type="text"></ion-input-->
-          <ion-input type="text" formControlName="username" placeholder="nom utilisateur"></ion-input>
+          <ion-input type="text" formControlName="username" [(ngModel)]=user.username placeholder="{{'NOMUTILISATEUR' | translate}}"></ion-input>
         </ion-item>
-        <div style="padding-left: 15px;" class="error-box" *ngIf="loginForm.controls['username'].hasError('required') && loginForm.controls['username'].touched">* le nom utilisateur est obligatoir!</div>
+        <div style="padding-left: 15px;" class="error-box" *ngIf="loginForm.controls['username'].hasError('required') && loginForm.controls['username'].touched">* {{'NOMUTILISATEUROBLIGATOIRE' | translate}}</div>
  
         <ion-item>
           <ion-label><ion-icon name="lock" class="error-box"></ion-icon></ion-label>
           <!--ion-input [(ngModel)]="mdpass" placeholder="mot de passe" type="password"></ion-input-->
-          <ion-input type="text" formControlName="mdpass" placeholder="mot de passe"></ion-input>
+          <ion-input type="password" formControlName="mdpass" [(ngModel)]=user.mdpass placeholder="{{'MOTDEPASSE' | translate}}"></ion-input>
         </ion-item>
-        <div style="padding-left: 15px;" class="error-box" *ngIf="loginForm.controls['mdpass'].hasError('required') && loginForm.controls['mdpass'].touched">* le mot de passe est obligatoir!</div>
+        <div style="padding-left: 15px;" class="error-box" *ngIf="loginForm.controls['mdpass'].hasError('required') && loginForm.controls['mdpass'].touched">* {{'MOTDEPASSEOBLIGATOIRE' | translate}}</div>
  
       <!--/ion-list-->
  
       <!--button ion-button (click)="login()" primary color="secondary" class="login-button" [disabled]="!username || !mdpass">Connexion</button-->
       <br>
-      <button ion-button type="submit" color="secondary" [disabled]="!loginForm.valid" class="login-button" block>Connexion</button>
+      <button ion-button type="submit" color="secondary" [disabled]="!loginForm.valid" class="login-button" block>{{'CONNEXION' | translate}}</button>
     </form>
     </ion-col>
   </ion-row>
  
     <ion-row>
       <ion-col>
-        <button (click)="register()" class="create-account">Créer un compte</button>
+        <button (click)="register()" class="create-account">{{'CREERCOMPTE' | translate}}</button>
+      </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="configOK == false" >
+      <ion-col>
+        <button (click)="connexionUlterieur()" class="connect-later" color="danger">Me connecter ulterieurement</button>
       </ion-col>
   </ion-row>
  

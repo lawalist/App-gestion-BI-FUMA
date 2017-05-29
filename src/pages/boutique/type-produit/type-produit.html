@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>type-produit</ion-title>
+    <ion-title>{{'TYPE-PRODUIT' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -17,21 +17,21 @@
   <!--h2>Liste des types de produits</h2-->
   <ion-list>
     <ion-item-sliding  *ngFor="let typeProduit of typeProduits">
-      <ion-item>
-        <p>Nom: {{typeProduit.nom}} </p>
+      <ion-item (click) = "detail(typeProduit)" >
+        <p>{{'NOM' | translate}}: {{typeProduit.nom}} </p>
       </ion-item>
 
       <ion-item-options side="left">
             <button ion-button color="primary" (click)="editer(typeProduit)">
               <ion-icon name="create"></ion-icon>
-              Editer
+              {{'EDITER' | translate}}
             </button>
           </ion-item-options>
 
           <ion-item-options side="right">
             <button ion-button color="danger" (click)="supprimer(typeProduit)">
               <ion-icon name="trash"></ion-icon>
-              Supprimer
+              {{'SUPPRIMER' | translate}}
             </button>
           </ion-item-options>
         </ion-item-sliding>

@@ -12,16 +12,28 @@ import { AutoCompleteService } from 'ionic2-auto-complete';
 @Injectable()
 export class AutoCompletion implements AutoCompleteService {
 
-  labelAtribute = 'name';
+  labelAttribute = "code_produit";
+  data: any = [];
   constructor(public http: Http) {
     console.log('Hello AutoCompletion Provider');
   }
 
-  getResults(keyword: string){
-    return this.http.get("https://restcountries.eu/rest/v1/"+keyword)
-    .map(result => {
-      return result.json().filter(item => item.name.toLowerCase().startsWith(keyword.toLowerCase()))
-    }); 
+  getResults(keyword:string) {
+    //let test: any = [{'name':'sani'}, {'name':'issa'}, {'name':'moussa'}, {'name':'idi'}, {'name':'ali'},];
+    /*return this.http.get("https://restcountries.eu/rest/v1/name/"+keyword)
+      .map(
+        result =>
+        {
+          return result.json()
+            .filter(item => item.name.toLowerCase().startsWith(keyword.toLowerCase()) )
+        });*/ 
+        if(this.data.length){
+          return this.data.filter(item => item.code_produit.toLowerCase().startsWith(keyword.toLowerCase()));
+        }else{
+          return
+        }
+        
   }
+
 
 }

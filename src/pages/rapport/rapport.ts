@@ -3,6 +3,9 @@ import { NavController, NavParams, Platform, AlertController } from 'ionic-angul
 import { Storage } from '@ionic/storage';
 import { Printer, PrintOptions, File } from 'ionic-native';
 import { GestionBoutique } from '../../providers/gestion-boutique';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../global-variables/variable';
+
 
 //import { FileSave } from '../../providers/file-save';
 
@@ -36,7 +39,9 @@ export class RapportPage {
   nomOperation: string = '';
 
 
-  constructor(public alertCtl: AlertController, public navCtrl: NavController, public platform: Platform, public navParams: NavParams, public storage: Storage, public gestionService: GestionBoutique) {}
+  constructor(public translate: TranslateService, public alertCtl: AlertController, public navCtrl: NavController, public platform: Platform, public navParams: NavParams, public storage: Storage, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
+  }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad RapportPage');
@@ -81,6 +86,7 @@ export class RapportPage {
   }*/
 
   ionViewWillEnter(){
+    this.translate.use(global.langue);
     let operations: any = [];
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getPlageDocs(id+':operation', id+':operation:\ufff0').then((data) => {

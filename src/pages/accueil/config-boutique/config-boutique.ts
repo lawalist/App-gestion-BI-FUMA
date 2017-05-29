@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
 import { GestionBoutique } from '../../../providers/gestion-boutique';
 import { Storage } from '@ionic/storage';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AjouterBoutiquePage } from '../../boutique/ajouter-boutique/ajouter-boutique';
 import { GerantPage } from '../../boutique/gerant/gerant';
@@ -35,14 +36,36 @@ export class ConfigBoutiquePage {
   gerants: any = [];
 
 
-  constructor(public navCtrl: NavController, public loadingCtl: LoadingController, public navParams: NavParams, public alertCtl: AlertController, public storage: Storage, public gestionService: GestionBoutique) {}
+  constructor(public translate: TranslateService, public navCtrl: NavController, public loadingCtl: LoadingController, public navParams: NavParams, public alertCtl: AlertController, public storage: Storage, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
+  }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ConfigBoutiquePage');
+  ionViewWillEnter() {
+    this.storage.get('tache').then((tache) => {
+      if(tache){
+        global.configOK = true;
+        
+      }else{
+        this.storage.get('boutique_id').then((id) => {
+          if(id){
+            this.gestionService.getBoutiqueById(id).then((res) => {
+              global.configOK = true;
+               
+            }, error => {
+                global.configOK = false;
+            });
+            
+          }else{
+            global.configOK = false;
+          }
+        });
+      }
+    });
   }
 
   
   ionViewDidEnter(){
+    this.translate.use(global.langue);
     //this.gestionService.doSync();
     this.storage.get('boutique_id').then((id) => {
       if(id){
@@ -100,7 +123,7 @@ export class ConfigBoutiquePage {
             handler: () => {
             // this.gestionService.getBoutiqueById(id).then((data) => { 
               if(!this.estIgnorer){
-                  if(gerants.length <= 0){
+                  /*if(gerants.length <= 0){
                     this.infoBoutique = true;
                     this.gerant = true;
                     this.typeProduit = false;
@@ -108,7 +131,7 @@ export class ConfigBoutiquePage {
                     this.ok = false;
                     this.ignore = true;
                     this.postion = 'gerant';
-                  }else if (data.type_produits.length <= 0){
+                  }else */if (data.type_produits.length <= 0){
                     this.infoBoutique = true;
                     this.gerant = true;
                     this.typeProduit = true;
@@ -164,7 +187,7 @@ export class ConfigBoutiquePage {
     }else{
     // this.gestionService.getBoutiqueById(id).then((data) => { 
       if(!this.estIgnorer){
-          if(gerants.length <= 0){
+          /*if(gerants.length <= 0){
             this.infoBoutique = true;
             this.gerant = true;
             this.typeProduit = false;
@@ -172,7 +195,7 @@ export class ConfigBoutiquePage {
             this.ok = false;
             this.ignore = true;
             this.postion = 'gerant';
-          }else if (data.type_produits.length <= 0){
+          }else */if (data.type_produits.length <= 0){
             this.infoBoutique = true;
             this.gerant = true;
             this.typeProduit = true;
@@ -255,7 +278,7 @@ export class ConfigBoutiquePage {
                   // handle change
                 }).on('paused',  (err) => {
                     this.gestionService.getBoutiqueById(data.boutique_id).then((boutique) => {
-                      this.storage.set('boutique_id', boutique._id);
+                      this.storage.set('boutique_id', boutique.id);
                 
                       global.changerInfoBoutique = false;
                       //this.ionViewDidEnter();
@@ -300,7 +323,7 @@ export class ConfigBoutiquePage {
                   // a document failed to replicate (e.g. due to permissions)
                 }).on('complete',  (info) => {
                   this.gestionService.getBoutiqueById(data.boutique_id).then((boutique) => {
-                      this.storage.set('boutique_id', boutique._id);
+                      this.storage.set('boutique_id', boutique.id);
                 
                       global.changerInfoBoutique = false;
                       //this.ionViewDidEnter();

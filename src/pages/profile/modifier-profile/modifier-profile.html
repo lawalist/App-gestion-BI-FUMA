@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>modifier-profile</ion-title>
+    <ion-title>{{'MODIFIERPROFILE' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -26,29 +26,29 @@
         <ion-item>
           <ion-label><ion-icon name="person"></ion-icon></ion-label>
           <!--ion-input [(ngModel)]="nom" placeholder="Nom" type="text"></ion-input-->
-          <ion-input type="text" formControlName="nom" placeholder="Nom complet"></ion-input>
+          <ion-input type="text" formControlName="nom" placeholder="{{'NOMCOMPLET' | translate}}"></ion-input>
         </ion-item>
-        <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['nom'].hasError('required') && registerForm.controls['nom'].touched">* le nom est obligatoir!</div>
+        <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['nom'].hasError('required') && registerForm.controls['nom'].touched">* {{'NOMOBLIGATOIRE' | translate}}</div>
  
         <ion-item>
           <ion-label><ion-icon name="mail"></ion-icon></ion-label>
           <!--ion-input [(ngModel)]="email" placeholder="Email" type="email"></ion-input-->
-          <ion-input type="Email" formControlName="email" placeholder="E-mail"></ion-input>
+          <ion-input type="Email" formControlName="email" placeholder="{{'EMAIL' | translate}}"></ion-input>
         </ion-item>
         <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['email'].hasError('required') && registerForm.controls['email'].touched">* l'email est obligatoir!</div>
  
         <ion-item>
-          <ion-label floating>Sex<span class="error-box">*</span></ion-label>
+          <ion-label floating>{{'SEX' | translate}}<span class="error-box">*</span></ion-label>
           <ion-select formControlName="sex" cancelText="Annuler" okText="Ok">
-            <ion-option value="" selected disabled>Selectionnez un sex</ion-option>
-            <ion-option value="H" >H</ion-option>
-            <ion-option value="F" >F</ion-option>
+            <ion-option value="" selected disabled>{{'SELECTIONNEZSEX' | translate}}</ion-option>
+            <ion-option value="H" >{{'HOMME' | translate}}</ion-option>
+            <ion-option value="F" >{{'FEMME' | translate}}</ion-option>
           </ion-select>
         </ion-item>
         <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['sex'].hasError('required') && registerForm.controls['sex'].touched">* le sex est obligatoir!</div>
   
         <ion-item>
-          <ion-label floating>Date Enrégistrement<span class="error-box">*</span></ion-label>
+          <ion-label floating>{{'DATEENREGISTREMENT' | translate}}<span class="error-box">*</span></ion-label>
           <ion-datetime displayFormat="DD/MM/YYYY" formControlName="date" cancelText="Annuler" doneText="Valider"></ion-datetime>
         </ion-item>
         <div style="padding-left: 15px;" class="error-box" *ngIf="registerForm.controls['date'].hasError('required') && registerForm.controls['date'].touched">* la date d'enrégistrement est obligatoir!</div>
@@ -56,7 +56,7 @@
  
       <!--button ion-button (click)="register()" color="secondary" class="continue-button" [disabled]="!username || !mdpass || !confmdpass">S'enrégistrer</button-->
       <br>
-      <button ion-button type="submit" [disabled]="!registerForm.valid" color="secondary" class="continue-button" block>S'enrégistrer</button>
+      <button ion-button type="submit" [disabled]="!registerForm.valid" color="secondary" class="continue-button" block>{{'SENREGISTRER' | translate}}</button>
     </form>
     </ion-col>
   </ion-row>

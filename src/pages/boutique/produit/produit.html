@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>produit</ion-title>
+    <ion-title>{{'PRODUIT' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -17,14 +17,15 @@
   <!--h2>Liste des produits</h2-->
   <ion-list>
     <ion-item *ngFor="let produit of produits" (click)="detail(produit, boutique_id)" >
-      <p>Type: {{produit.type_produit}} </p>
-      <p>Nom: {{produit.nom_produit}} </p>
-      <p>Quantité: {{produit.quantite}}</p>
-      <p>Prix unitaire: {{produit.prix}}</p>
+      <p>{{'CODEPRODUIT' | translate}}: {{produit.code_produit}} </p>
+      <p>{{'TYPEPRODUIT' | translate}}: {{produit.type_produit}} </p>
+      <p>{{'NOM' | translate}}: {{produit.nom_produit}} </p>
+      <p>{{'QUANTITE' | translate}}: {{produit.quantite}} {{produit.unite_mesure}}</p>
+      <p>{{'PRIXUNITAIRE' | translate}}: {{produit.prix}}</p>
     </ion-item>
 
     <ion-item *ngIf="!produits.length > 0">
-      <div class="message">La liste est vide !</div>
+      <div class="message">{{'LISTEVIDE' | translate}}</div>
     </ion-item>
   </ion-list>
 

@@ -1,0 +1,18 @@
+page-choix-type-utilisateur {
+     .img-container{
+        display: flex;
+        justify-content: center
+    }
+    img{
+        max-height:33vh
+    }
+    p{
+        text-align:center
+    }
+
+    h3{
+        text-align: center;
+        color: #4b7b4e;
+        //background-color: fuma-green-dark
+    }
+}

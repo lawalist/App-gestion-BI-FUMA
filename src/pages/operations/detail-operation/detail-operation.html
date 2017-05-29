@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>detail-opération</ion-title>
+    <ion-title>{{'DETAILOPERATION' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -15,38 +15,39 @@
 
 <ion-content padding>
   <h4 style="text-align: center; color: seagreen">
-    Détail opération numéro: {{operation.code_operation}}
+    {{'DETAILOPERATIONNUMERO' | translate}}: {{operation.code_operation}}
   </h4>
   <ion-card>
     <ion-card-header>
-      <strong>Informations opération</strong>
+      <strong>{{'INFOOPERATION' | translate}}</strong>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
         <ion-item-sliding>
           <ion-item>
-            <h2><strong>Type opération:</strong> {{operation.type}} </h2>
-            <h2><strong>Date:</strong> {{operation.date | date: 'dd-MM-yyyy'}}</h2>
-            <h2><strong>Type produit:</strong> {{operation.type_produit}} </h2>
-            <h2><strong>Nom produit:</strong> {{operation.nom_produit}} </h2>
-            <h2><strong>Quantité:</strong> {{operation.quantite}} {{operation.unite}} </h2>
-            <h2><strong>Prix unitaire:</strong> {{operation.prix_unitaire}}F</h2>
-            <h2><strong>Montant total:</strong> {{operation.montant_total}}F</h2>
-            <h2><strong>Solde caisse:</strong> {{operation.solde_caisse}}F</h2>
-            <h2><strong>Solde trésor:</strong> {{operation.solde_tresor}}F</h2>
-            <h2><strong>Observation:</strong> {{operation.observation}}</h2>
+            <h2><strong>{{'TYPEOPERATION' | translate}}:</strong> {{operation.type}} </h2>
+            <h2><strong>{{'DATE' | translate}}:</strong> {{operation.date | date: 'dd-MM-yyyy'}}</h2>
+            <h2><strong>{{'TYPEPRODUIT' | translate}}:</strong> {{operation.type_produit}} </h2>
+            <h2><strong>{{'CODEPRODUIT' | translate}}:</strong> {{operation.code_produit}} </h2>
+            <h2><strong>{{'NOMPRODUIT' | translate}}:</strong> {{operation.nom_produit}} </h2>
+            <h2><strong>{{'QUANTITE' | translate}}:</strong> {{operation.quantite}} {{operation.unite}} </h2>
+            <h2><strong>{{'PRIXUNITAIRE' | translate}}:</strong> {{operation.prix_unitaire}}F</h2>
+            <h2><strong>{{'MONTANTTOTAL' | translate}}:</strong> {{operation.montant_total}}F</h2>
+            <h2><strong>{{'SOLDECAISSE' | translate}}:</strong> {{operation.solde_caisse}}F</h2>
+            <h2><strong>{{'SOLDETRESOR' | translate}}:</strong> {{operation.solde_tresor}}F</h2>
+            <h2><strong>{{'OBSERVATION' | translate}}:</strong> {{operation.observation}}</h2>
           </ion-item>
           <ion-item-options side="left">
-            <button ion-button color="primary" (click)="editer(operation)">
+            <button ion-button color="danger" (click)="annuler(operation)">
               <ion-icon name="create"></ion-icon>
-              Editer
+              {{'ANNULER' | translate}}
             </button>
           </ion-item-options>
 
           <ion-item-options side="right">
             <button ion-button color="danger" (click)="supprimer(operation)">
               <ion-icon name="trash"></ion-icon>
-              Supprimer
+              {{'SUPPRIMER' | translate}}
             </button>
           </ion-item-options>
         </ion-item-sliding>
@@ -56,28 +57,30 @@
 
   <ion-card>
     <ion-card-header>
-      <strong>Informations client</strong>
+      <strong>{{'INFOCLIENT' | translate}}</strong>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
         <ion-item-sliding>
           <ion-item>
-            <h2><strong>Nom:</strong> {{operation.nom_client}}</h2>
-            <h2><strong>Sex:</strong> {{operation.sex_client}}</h2>
-            <h2><strong>Village:</strong> {{operation.village_client}}</h2>
-            <h2><strong>OP:</strong> {{operation.op_client}}</h2>
+            <h2><strong>{{'TYPECLIENT' | translate}}:</strong> {{operation.type_client}}</h2>
+            <h2><strong>{{'MATRICULE' | translate}}:</strong> <span *ngIf="operation.type_client == 'Membre union'">{{operation.matricule_client}}</span></h2>
+            <h2><strong>{{'NOM' | translate}}:</strong> {{operation.nom_client}}</h2>
+            <h2><strong>{{'SEX' | translate}}:</strong> {{operation.sex_client}}</h2>
+            <h2><strong>{{'VILLAGE' | translate}}:</strong> {{operation.village_client}}</h2>
+            <h2><strong>{{'OP' | translate}}:</strong> {{operation.op_client}}</h2>
           </ion-item>
           <ion-item-options side="left">
-            <button ion-button color="primary" (click)="editer(operation)">
+            <button ion-button color="danger" (click)="annuler(operation)">
               <ion-icon name="create"></ion-icon>
-              Editer
+              {{'ANNULER' | translate}}
             </button>
           </ion-item-options>
 
           <ion-item-options side="right">
             <button ion-button color="danger" (click)="supprimer(operation)">
               <ion-icon name="trash"></ion-icon>
-              Supprimer
+              {{'SUPPRIMER' | translate}}
             </button>
           </ion-item-options>
         </ion-item-sliding>
@@ -87,16 +90,41 @@
 
   <ion-card>
     <ion-card-header>
-      <strong>Informations gérant</strong>
+      <strong>{{'INFOGERANT' | translate}}</strong>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
         <ion-item>
-          <h2><strong>Matricule:</strong> {{operation.matricule_gerant}}</h2>
-          <h2><strong>nom:</strong> {{operation.nom_gerant}}</h2>
+          <h2><strong>{{'MATRICULE' | translate}}:</strong> {{operation.matricule_gerant}}</h2>
+          <h2><strong>{{'NOM' | translate}}:</strong> {{operation.nom_gerant}}</h2>
           <!--h2><strong>prenom:</strong> {{operation.prenom_gerant}}</h2-->
         </ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>
+
+  <ion-card *ngIf = "tacheAdmin == 'admin'">
+    <ion-card-header>
+      <strong>Info sup</strong>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <h2><strong>created_at:</strong> {{operation.created_at}}</h2>
+          <h2><strong>created_by:</strong> {{operation.by}}</h2>
+          <h2><strong>updatet_at:</strong> {{operation.updatet_at}}</h2>
+          <h2><strong>updatet_by:</strong> {{operation.updatet_by}}</h2>
+          <h2><strong>deleted_at:</strong> {{operation.deleted_at}}</h2>
+          <h2><strong>deleted_by:</strong> {{operation.deleted_by}}</h2>
+          <h2><strong>annuler_at:</strong> {{operation.annuler_at}}</h2>
+          <h2><strong>annuler_bye:</strong> {{operation.annuler_by}}</h2>
+          <!--h2><strong>prenom:</strong> {{operation.prenom_gerant}}</h2-->
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-fab bottom right>
+    <button ion-fab mini (click)="editer(operation)" ><ion-icon name="create"></ion-icon></button>
+  </ion-fab>
 </ion-content>

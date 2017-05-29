@@ -4,6 +4,9 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 
 import { GestionBoutique } from '../../../providers/gestion-boutique';
+import { AutoCompletion } from '../../../providers/auto-completion';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../global-variables/variable';
 
 /*
   Generated class for the ModifierOperation page.
@@ -18,6 +21,7 @@ import { GestionBoutique } from '../../../providers/gestion-boutique';
 export class ModifierOperationPage {
   operation: any;
   idOperation: any = '';
+  nomProduit: any = '';
   ancienOperation:any;
   produits: any;
   tousProduits: any;
@@ -31,26 +35,55 @@ export class ModifierOperationPage {
   quantiteMax: any = '';
   boutique_id: any;
   textQuantite: string = 'Quantité';
+  mat_client: any = '';
   textQuantiteMax: any = '';
   textQuantiteMaxInitial: any = '';
   typeProduits: any = [];
   typeOperation: any = [];
+  typeClient: any = [];
   boutique: any;
   allProduits: any = [];
   allOperation: any = [];
+  selectedTypeClient: any = '';
 
-  constructor(public storage: Storage, public navCtrl: NavController, public alertCtl: AlertController, public navParams: NavParams,public toastCtl: ToastController, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
+  typeProduitDecaissement: any = [{
+    "nom": "Argent"
+  },];
+
+  //gerant:any = {};
+
+  produitDecaissement: any = [{
+      "_id": 'B:produit:AG', 
+      "code_produit": "AG",
+      "type_produit": "Argent",
+      "nom_produit": "Argent",
+      "quantite": 0,
+      "prix": "1",
+      "unite_mesure": "F",
+      "prix_total": 0
+    }];
+  
+
+  constructor(public translate: TranslateService, public ServiceAutoCompletion: AutoCompletion, public storage: Storage, public navCtrl: NavController, public alertCtl: AlertController, public navParams: NavParams,public toastCtl: ToastController, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     this.ancienOperation = this.navParams.get('operation');
     this.idOperation = this.ancienOperation.code_operation;//.substr(this.ancienOperation._id.lastIndexOf(':') + 1)
+    this.selectedTypeClient = this.ancienOperation.type_client;
     //this.selectedProduit = this.ancienVent.produit;
     this.boutique_id = this.navParams.data.boutique_id;
+    this.gestionService.getPlageDocs(this.boutique_id+':produit', this.boutique_id+':produit:\ufff0').then((res) => {
+      this.ServiceAutoCompletion.data = res;
+    });
     this.prixUnitaire = this.ancienOperation.prix_unitaire;
     this.totalPrix = this.ancienOperation.montant_total;
     this.quantiteMax = this.ancienOperation.quantite;
     this.selectedTypeProduit = this.ancienOperation.type_produit;
+    this.mat_client = this.ancienOperation.matricule_client;
     this.selectedProduitPrixUnitaire = this.ancienOperation.prix_unitaire;
     this.selectedTypeOperation = this.ancienOperation.type;
+    this.nomProduit = this.ancienOperation.nom_produit;
     this.typeOperation = ['VENTE' , 'DEPENSE', 'DECAISSEMENT', 'LOCATION', 'RETOUR LOCATION', 'SUBVENTION'];
+    this.typeClient = ['Membre union' , 'Autre'];
 
 
     this.textQuantite = 'Quantité (' + this.ancienOperation.unite +')';
@@ -65,12 +98,12 @@ export class ModifierOperationPage {
     this.gestionService.getPlageDocs(this.boutique_id + ':produit', this.boutique_id + ':produit:\ufff0').then((data) => {
       this.tousProduits = data;
 
-      this.produits = [];
-      this.tousProduits.forEach((tprod, index) => {
+      this.produits = data;
+      /*this.tousProduits.forEach((tprod, index) => {
         if(tprod.type_produit === this.selectedTypeProduit){
           this.produits.push(tprod);
-        }
-    });
+        }*/
+    //});
 
       this.tousProduits.forEach((tprod, index) => {
           if(tprod.code_produit  === this.ancienOperation.code_produit){
@@ -107,14 +140,16 @@ export class ModifierOperationPage {
       _rev: [this.ancienOperation._rev],
       type: [this.ancienOperation.type],
       code_operation: [this.ancienOperation.code_operation],
+      type_client: [this.ancienOperation.type_client, Validators.required],
       date: [this.ancienOperation.date, Validators.required],
       code_produit: [this.ancienOperation.code_produit, Validators.required],
       type_produit: [this.ancienOperation.type_produit, Validators.required],
+      nom_produit: [this.ancienOperation.nom_produit, Validators.required],
       unite: [this.ancienOperation.unite],
       quantite: [this.ancienOperation.quantite, Validators.compose([Validators.required])],
       prix_unitaire: [this.ancienOperation.prix_unitaire, Validators.required],
       montant_total: [this.ancienOperation.montant_total, Validators.compose([Validators.required])],
-      matricule_client: [this.ancienOperation.matricule_client],
+      matricule_client: [this.ancienOperation.matricule_client, Validators.required], 
       nom_client: [this.ancienOperation.nom_client],
       sex_client: [this.ancienOperation.sex_client],
       village_client: [this.ancienOperation.village_client],
@@ -142,6 +177,18 @@ export class ModifierOperationPage {
        });
       }); 
   
+  }
+
+  choixTypeClient(){
+    if(this.selectedTypeClient === 'Membre union'){
+      if(this.ancienOperation.matricule_client === 'NA'){
+        this.mat_client = '';
+      }else{
+        this.mat_client = this.ancienOperation.matricule_client;
+      }
+    }else{
+      this.mat_client = 'NA';
+    }
   }
 
    choixTypeOperation(){
@@ -214,6 +261,7 @@ export class ModifierOperationPage {
   }
 
   ionViewWillEnter(){
+    this.translate.use(global.langue);
 
     /*this.gestionService.getBoutiqueById(this.boutique_id).then((boutique) => {
       this.produits = boutique.produits;
@@ -276,6 +324,8 @@ export class ModifierOperationPage {
     /*this.textQuantite = 'Quantité (' + this.selectedProduit.unite_mesure +')';
     this.selectedProduitPrixUnitaire = this.selectedProduit.prix;*/
     let op = this.operation.value;
+    this.nomProduit = this.selectedProduit.nom_produit;
+    this.selectedTypeProduit = this.selectedProduit.type_produit;
   
     switch (op.type){
       case 'VENTE':
@@ -820,6 +870,7 @@ export class ModifierOperationPage {
          nouvelleOperation.code_produit = this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1);
          nouvelleOperation.nom_produit = this.selectedProduit.nom_produit;
          nouvelleOperation.unite = this.selectedProduit.unite_mesure;
+         nouvelleOperation.matricule_client = this.mat_client;
 
          this.gestionService.updateDoc(nouvelleOperation);
 
@@ -830,7 +881,7 @@ export class ModifierOperationPage {
                 //cas du meme produit
                 //
                
-                if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1)  === this.ancienOperation.code_produit) /*(nouvelleOperation.code_produit === this.ancienOperation.code_produit)*/{
+                if(nouvelleOperation.code_produit  === this.ancienOperation.code_produit) /*(nouvelleOperation.code_produit === this.ancienOperation.code_produit)*/{
                   //cas d'une augmentation de la quantité du produit
                     if(parseInt(this.ancienOperation.quantite) < parseInt(nouvelleOperation.quantite)){
                       nq = parseInt(nouvelleOperation.quantite) - parseInt(this.ancienOperation.quantite);
@@ -853,7 +904,7 @@ export class ModifierOperationPage {
                     //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
                    // produits.forEach((prod, index) => {
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                     // if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           if(qMax <= this.selectedProduit.quantite){
                             this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
@@ -864,7 +915,7 @@ export class ModifierOperationPage {
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                     //   }
                    // });
 
                     //on met a jour le solde de la caisse
@@ -881,16 +932,20 @@ export class ModifierOperationPage {
                     //Calculer la nouvelle valeur du produit restant
                     //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
+                      this.gestionService.getDocById(this.boutique_id+':produit:'+this.ancienOperation.code_produit).then((res) => {
+                          res.quantite = parseInt(res.quantite) + parseInt(this.ancienOperation.quantite);
+                          this.gestionService.updateDoc(res);
+                      });
+                      /*if(this.selectedProduit.code_produit === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
                           this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                        }*/
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      //if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
                         if(parseInt(this.selectedProduit.quantite) >= parseInt(nouvelleOperation.quantite)){
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
@@ -900,7 +955,7 @@ export class ModifierOperationPage {
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
-                      }
+                     // }
                     //});
                     
                     //on met a jour le solde de la caisse
@@ -972,7 +1027,7 @@ export class ModifierOperationPage {
                     //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
                     //produits.forEach((prod, index) => {
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      //if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           if(qMax <= this.boutique.solde_tresor){
                             this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
@@ -983,7 +1038,7 @@ export class ModifierOperationPage {
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                       }
+                      // }
                    // });
 
                     //on met a jour le solde de la caisse
@@ -1000,16 +1055,21 @@ export class ModifierOperationPage {
                     //Calculer la nouvelle valeur du produit restant
                    // produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
+                     /* if(this.selectedProduit.code_produit === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
                           this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                        }*/
+
+                      this.gestionService.getDocById(this.boutique_id+':produit:'+this.ancienOperation.code_produit).then((res) => {
+                        res.quantite = parseInt(res.quantite) + parseInt(this.ancienOperation.quantite);
+                        this.gestionService.updateDoc(res);
+                      });
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      //if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
                         if(parseInt(this.boutique.solde_tresor) >= parseInt(nouvelleOperation.quantite)){
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
@@ -1019,7 +1079,7 @@ export class ModifierOperationPage {
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
-                      }
+                     // }
                     //});
                     
                     //on met a jour le solde de la caisse
@@ -1090,7 +1150,7 @@ export class ModifierOperationPage {
                    // produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
                     //produits.forEach((prod, index) => {
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      //if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           if(qMax <= this.boutique.solde_caisse){
                             this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
@@ -1101,7 +1161,7 @@ export class ModifierOperationPage {
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                     //   }
                     //});
 
                     //on met a jour le solde de la caisse
@@ -1125,26 +1185,31 @@ export class ModifierOperationPage {
                     //Calculer la nouvelle valeur du produit restant
                     //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
+                      /*if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
                           this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                        }*/
+
+                        this.gestionService.getDocById(this.boutique_id+':produit:'+this.ancienOperation.code_produit).then((res) => {
+                          res.quantite = parseInt(res.quantite) + parseInt(this.ancienOperation.quantite);
+                          this.gestionService.updateDoc(res);
+                      });
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      //if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
-                        if(parseInt(this.boutique.solde_caisse) >= parseInt(nouvelleOperation.quantite)){
-                          this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
-                          estOk = true
-                          this.gestionService.updateDoc(this.selectedProduit);
+                      if(parseInt(this.boutique.solde_caisse) >= parseInt(nouvelleOperation.quantite)){
+                        this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
+                        estOk = true
+                        this.gestionService.updateDoc(this.selectedProduit);
                        }
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
-                     }
+                    // }
                     //});
                     
                     //on met a jour le solde de la caisse
@@ -1224,7 +1289,7 @@ export class ModifierOperationPage {
                     //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
                    // produits.forEach((prod, index) => {
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      //if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           if(qMax <= this.selectedProduit.quantite){
                             this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
@@ -1235,7 +1300,7 @@ export class ModifierOperationPage {
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                      //  }
                    // });
 
                     //on met a jour le solde de la caisse
@@ -1253,16 +1318,21 @@ export class ModifierOperationPage {
                     //Calculer la nouvelle valeur du produit restant
                     //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
+                      /*if(this.selectedProduit.code_produit === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
                           this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                      }*/
+
+                      this.gestionService.getDocById(this.boutique_id+':produit:'+this.ancienOperation.code_produit).then((res) => {
+                        res.quantite = parseInt(res.quantite) + parseInt(this.ancienOperation.quantite);
+                        this.gestionService.updateDoc(res);
+                      });
                          
                       //metre a jour la quantite du nouveau produit achete
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
                         if(parseInt(this.selectedProduit.quantite) >= parseInt(nouvelleOperation.quantite)){
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
@@ -1343,7 +1413,7 @@ export class ModifierOperationPage {
                     //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
                    // produits.forEach((prod, index) => {
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                     // if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           //if(qMax <= produits[index].quantite){
                             this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
@@ -1354,7 +1424,7 @@ export class ModifierOperationPage {
                           //inexProuit = index;
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                       // }
                     //});
 
                     //on met a jour le solde de la caisse
@@ -1371,16 +1441,21 @@ export class ModifierOperationPage {
                     //Calculer la nouvelle valeur du produit restant
                     //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
+                     /* if(this.selectedProduit.code_produit === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
                           this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                      }*/
+
+                      this.gestionService.getDocById(this.boutique_id+':produit:'+this.ancienOperation.code_produit).then((res) => {
+                        res.quantite = parseInt(res.quantite) + parseInt(this.ancienOperation.quantite);
+                        this.gestionService.updateDoc(res);
+                      });
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      //if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
                         if(parseInt(this.selectedProduit.quantite) >= parseInt(nouvelleOperation.quantite)){
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
@@ -1390,7 +1465,7 @@ export class ModifierOperationPage {
                         
                         //metre à jour la valeur du produit de la vente
                         //ventes[indexVente].produit = produits[index];
-                      }
+                      //}
                     //});
                     
                     //on met a jour le solde de la caisse
@@ -1462,7 +1537,7 @@ export class ModifierOperationPage {
                     //produits = data.produits
                     //Calculer la nouvelle valeur du produit restant
                     //produits.forEach((prod, index) => {
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                           //prod.quantite = prod.quantite
                           //if(qMax <= produits[index].quantite){
                             this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nq);
@@ -1490,16 +1565,21 @@ export class ModifierOperationPage {
                     //Calculer la nouvelle valeur du produit restant
                     //produits.forEach((prod, index) => {
                       //Restituerl'ancienne quantite du produit
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === this.ancienOperation.code_produit){
+                     /* if(this.selectedProduit.code_produit === this.ancienOperation.code_produit){
                           //prod.quantite = prod.quantite 
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) + parseInt(this.ancienOperation.quantite);
                           this.gestionService.updateDoc(this.selectedProduit);
                           //metre à jour la valeur du produit de la vente
                           //ventes[indexVente].produit = produits[index];
-                        }
+                      }*/
+
+                      this.gestionService.getDocById(this.boutique_id+':produit:'+this.ancienOperation.code_produit).then((res) => {
+                        res.quantite = parseInt(res.quantite) + parseInt(this.ancienOperation.quantite);
+                        this.gestionService.updateDoc(res);
+                      });
                       
                       //metre a jour la quantite du nouveau produit achete
-                      if(this.selectedProduit._id.substr(this.selectedProduit._id.length - 3, this.selectedProduit._id.length -1) === nouvelleOperation.code_produit){
+                      if(this.selectedProduit.code_produit === nouvelleOperation.code_produit){
                         //prod.quantite = prod.quantite 
                         if(parseInt(this.selectedProduit.quantite) >= parseInt(nouvelleOperation.quantite)){
                           this.selectedProduit.quantite = parseInt(this.selectedProduit.quantite) - parseInt(nouvelleOperation.quantite);
@@ -1547,6 +1627,42 @@ export class ModifierOperationPage {
 
   annuler(){
     this.navCtrl.pop();
+  }
+
+
+   itemSelected(ev: any){
+    //alert(ev.code_produit);
+    this.gestionService.getDocById(this.boutique_id+':produit:'+ev.code_produit).then((produit) => {
+      this.selectedProduit = produit;
+
+      this.textQuantite = 'Quantité (' + this.selectedProduit.unite_mesure +')';
+      this.selectedProduitPrixUnitaire = this.selectedProduit.prix;
+      this.selectedTypeProduit = this.selectedProduit.type_produit;
+      this.nomProduit = this.selectedProduit.nom_produit;
+      let op = this.operation.value;
+    
+      switch (op.type){
+        case 'VENTE':
+          this.textQuantiteMax = 'Stock disponigle: ' +this.selectedProduit.quantite + ' (' + this.selectedProduit.unite_mesure +')';
+          break;
+        case 'DEPENSE':
+          this.textQuantiteMax = 'Solde trésor disponible: '+ this.boutique.solde_tresor + 'FCFA';
+          break;
+          case 'DECAISSEMENT':
+            this.textQuantiteMax = 'Solde caisse disponible: '+ this.boutique.solde_caisse + 'FCFA';
+          break;
+        case 'LOCATION':
+          this.textQuantiteMax = 'Stock disponigle: '+ this.selectedProduit.quantite + ' (' + this.selectedProduit.unite_mesure +')';
+          break;
+          case 'RETOUR LOCATION':
+            this.textQuantiteMax = '';
+            this.selectedProduitPrixUnitaire = 0;
+          break;
+        case 'SUBVENTION':
+          this.textQuantiteMax = '';
+          break;
+      }
+    });
   }
 
 }

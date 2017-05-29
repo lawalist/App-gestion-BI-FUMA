@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>ajouter-opération</ion-title>
+    <ion-title>{{'AJOUTOPERATION' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -20,23 +20,33 @@
   <h6 *ngIf="textQuantiteMax" style="padding-left: 15px; text-align: center" class="error-box">{{textQuantiteMax}}</h6>
   
   <ion-item>
-    <ion-label floating>ID operation</ion-label>
+    <ion-label floating>{{'IDOPERATION' | translate}}</ion-label>
     <ion-input type="text" formControlName="code_operation" [(ngModel)]="code_op" disabled></ion-input>
   </ion-item>
   <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['code_operation'].hasError('required') && operation.controls['code_operation'].touched">* l'ID de l'operation est obligatoir!</div>
   
+  
 
   <ion-item>
-    <ion-label floating>Type opération <span class="error-box">*</span></ion-label>
-    <ion-select formControlName="type" [(ngModel)] = "selectedTypeOperation" cancelText="Annuler" okText="Ok" (ionChange)="choixTypeOperation()" >
-      <ion-option value="" selected disabled>Selectionnez le type d'opération</ion-option>
+    <ion-label floating>{{'TYPECLIENT' | translate}} <span class="error-box">*</span></ion-label>
+    <ion-select formControlName="type_client" [(ngModel)] = "selectedTypeClient" cancelText="Annuler" okText="Ok" (ionChange)="choixTypeClient()">
+      <ion-option value="" selected disabled>{{'SELECTIONTYPECLIENT' | translate}}</ion-option>
+      <ion-option *ngFor="let tClient of typeClient" [value]=tClient>{{tClient}}</ion-option>
+    </ion-select>
+  </ion-item>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['type_client'].hasError('required') && operation.controls['type_client'].touched">* {{'TYPECLIENTOBLIGATOIRE' | translate}}</div>
+
+  <ion-item>
+    <ion-label floating>{{'TYPEOPERATION' | translate}} <span class="error-box">*</span></ion-label>
+    <ion-select formControlName="type" [(ngModel)] = "selectedTypeOperation" cancelText="Annuler" okText="Ok" (ionChange)="choixTypeOperation()">
+      <ion-option value="" selected disabled>{{'SELECTIONTYPEOPERATION' | translate}}</ion-option>
       <ion-option *ngFor="let tOp of typeOperation" [value]=tOp>{{tOp}}</ion-option>
     </ion-select>
   </ion-item>
-  <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['type'].hasError('required') && operation.controls['type'].touched">* Le type d'opération est obligatoir!</div>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['type'].hasError('required') && operation.controls['type'].touched">* {{'TYPEOPERATIONOBLIGATOIRE' | translate}}</div>
 
   <ion-item>
-    <ion-label floating>Date <span class="error-box">*</span></ion-label>
+    <ion-label floating>{{'DATE' | translate}} <span class="error-box">*</span></ion-label>
     <ion-datetime displayFormat="DD/MM/YYYY" formControlName="date" cancelText="Annuler" doneText="Valider"></ion-datetime>
   </ion-item>
 
@@ -56,40 +66,45 @@
       </ion-select>
    </ion-item>
   <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['type_produit'].hasError('required') && operation.controls['type_produit'].touched">* Le type de produit est obligatoir!</div-->
-
-  <ion-item *ngIf="selectedTypeOperation != 'DECAISSEMENT'">
+<!--ion-item-->
+  <ion-row>
+    <ion-col>
+      
+      <ion-auto-complete *ngIf="selectedTypeOperation != 'DECAISSEMENT'" [dataProvider]="ServiceAutoCompletion" [options]="{ placeholder : 'Code produit' }" (itemSelected)="itemSelected($event)" ></ion-auto-complete>
+      
+    </ion-col>
+  </ion-row>
+<!--/ion-item-->
+  <!--ion-item *ngIf="selectedTypeOperation != 'DECAISSEMENT'">
     <ion-label floating>Code produit <span class="error-box">*</span></ion-label>
     <ion-select formControlName="code_produit" [(ngModel)] = "selectedProduit" (ionChange)="ionChange()" cancelText="Annuler" okText="Ok" [disabled]="!estTypeOperation()">
       <ion-option value="" selected disabled>Selectionnez un produit</ion-option>
       <ion-option *ngFor="let prod of produits" [value]=prod > {{prod.code_produit}} </ion-option>
     </ion-select>
-  </ion-item>
+  </ion-item-->
 
   <ion-item *ngIf="selectedTypeOperation == 'DECAISSEMENT'">
-    <ion-label floating>Code produit <span class="error-box">*</span></ion-label>
-    <ion-select formControlName="code_produit" [(ngModel)] = "selectedProduit" (ionChange)="ionChange()" cancelText="Annuler" okText="Ok" [disabled]="!estTypeOperation()">
-      <ion-option value="" selected disabled>Selectionnez un produit</ion-option>
-      <ion-option *ngFor="let prod of produitDecaissement" [value]=prod > {{prod.nom_produit}} </ion-option>
-    </ion-select>
+    <ion-label floating>{{'CODEPRODUIT' | translate}} <span class="error-box">*</span></ion-label>
+    <ion-input type="text" formControlName="code_produit" [(ngModel)] = "selectedProduit.code_produit" disabled></ion-input>
   </ion-item>
-  <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['code_produit'].hasError('required') && operation.controls['code_produit'].touched">* Le code du produit est obligatoir!</div>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['code_produit'].hasError('required') && operation.controls['code_produit'].touched">* {{'CODEPRODUITOBLIGATOIRE' | translate}}</div>
   
 
   <ion-row>
     <ion-col>
-      <ion-item *ngIf="selectedTypeOperation != 'DECAISSEMENT'">
-        <ion-label floating>Nom produit <span class="error-box">*</span></ion-label>
+      <ion-item>
+        <ion-label floating>{{'NOMPRODUIT' | translate}} <span class="error-box">*</span></ion-label>
         <ion-input type="text" formControlName="nom_produit" [(ngModel)] = "nomProduit" disabled></ion-input>
       </ion-item>
-      <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['nom_produit'].hasError('required') && operation.controls['nom_produit'].touched">* Le nom du produit est obligatoir!</div>
+      <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['nom_produit'].hasError('required') && operation.controls['nom_produit'].touched">* {{'NOMPRODUITOBLIGATOIRE' | translate}}</div>
     </ion-col>
 
     <ion-col>
       <ion-item>
-        <ion-label floating>Prix unitaire (FCFA) <span class="error-box">*</span></ion-label>
+        <ion-label floating>{{'PRIXUNITAIRE' | translate}} <span class="error-box">*</span></ion-label>
         <ion-input type="number" formControlName="prix_unitaire" [(ngModel)]="selectedProduitPrixUnitaire" (click)="onClickChampsCalculAuto()" disabled></ion-input>
       </ion-item>
-      <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['prix_unitaire'].hasError('required') && operation.controls['prix_unitaire'].touched">* Le prix unitaire est obligatoir!</div>
+      <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['prix_unitaire'].hasError('required') && operation.controls['prix_unitaire'].touched">* {{'PRIXUNITAIREOBLIGATOIRE' | translate}}</div>
     </ion-col>
   </ion-row>
 
@@ -99,59 +114,59 @@
         <ion-label floating>{{textQuantite}} <span class="error-box">*</span></ion-label>
         <ion-input type="number" formControlName="quantite" [(ngModel)]="quantiteMax" (keyup)="onKeyup()" (click)="onClick()" ></ion-input>
       </ion-item>
-      <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['quantite'].hasError('required') && operation.controls['quantite'].touched">* La quantite est un nombre positif, obligatoir!</div>
+      <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['quantite'].hasError('required') && operation.controls['quantite'].touched">* {{'QUANTITEOPERATIONOBLIGATOIRE' | translate}}</div>
     </ion-col>
 
     <ion-col>
       <ion-item>
-        <ion-label floating>Montant total (FCFA) <span class="error-box">*</span></ion-label>
+        <ion-label floating>{{'MONTANTTOTALFCFA' | translate}} <span class="error-box">*</span></ion-label>
         <ion-input type="number" formControlName="montant_total" [(ngModel)]="totalPrix" (click)="onClickChampsCalculAuto()" disabled></ion-input>
       </ion-item>
-      <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['montant_total'].hasError('required') && operation.controls['montant_total'].touched">* Le montant total est obligatoir!</div>
+      <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['montant_total'].hasError('required') && operation.controls['montant_total'].touched">* {{'MONTANTTOTALOBLIGATOIRE' | translate}}</div>
     </ion-col>
   </ion-row>
 
-  <ion-item>
-    <ion-label floating>Matricule client (pour les membres)</ion-label>
-    <ion-input type="text" formControlName="matricule_client"></ion-input>
+  <ion-item *ngIf="selectedTypeClient == 'Membre union'">
+    <ion-label floating>{{'MATRICULECLIENT' | translate}} <span class="error-box">*</span></ion-label>
+    <ion-input type="text" formControlName="matricule_client" [(ngModel)]="mat_client" ></ion-input>
   </ion-item>
-  <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['matricule_client'].hasError('required') && operation.controls['matricule_client'].touched">* le matricule du client est obligatoir!</div>
+  <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['matricule_client'].hasError('required') && operation.controls['matricule_client'].touched">* {{'MATRICULECLIENTOBLIGATOIRE' [ translate]}}</div>
 
-  <ion-item>
-    <ion-label floating>Nom client</ion-label>
-    <ion-input type="text" formControlName="nom_client"></ion-input>
+  <ion-item *ngIf="selectedTypeClient">
+    <ion-label floating>{{'NOMCLIENT' | translate}}</ion-label>
+    <ion-input type="text" formControlName="nom_client" [disabled]="selectedTypeClient == 'Membre union'"></ion-input>
   </ion-item>
   <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['nom_client'].hasError('required') && operation.controls['nom_client'].touched">* le nom du client est obligatoir!</div>
   
-  <ion-item>
-    <ion-label floating>Sex client</ion-label>
-    <ion-select formControlName="sex_client" cancelText="Annuler" okText="Ok">
-      <ion-option value="" selected disabled>Selectionnez un sex</ion-option>
-      <ion-option value="H" >H</ion-option>
-      <ion-option value="F" >F</ion-option>
+  <ion-item *ngIf="selectedTypeClient">
+    <ion-label floating>{{'SEXCLIENT' | translate}}</ion-label>
+    <ion-select formControlName="sex_client" cancelText="Annuler" okText="Ok" [disabled]="selectedTypeClient == 'Membre union'">
+      <ion-option value="" selected disabled>{{'SELECTIONNEZSEX' | translate}}</ion-option>
+      <ion-option value="H" >{{'HOMME' | translate}}</ion-option>
+      <ion-option value="F" >{{'FEMME' | translate}}</ion-option>
     </ion-select>
   </ion-item>
   <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['sex_client'].hasError('required') && operation.controls['sex_client'].touched">* le sex du client est obligatoir!</div>
   
-  <ion-item>
-    <ion-label floating>Village client</ion-label>
-    <ion-input type="text" formControlName="village_client"></ion-input>
+  <ion-item *ngIf="selectedTypeClient">
+    <ion-label floating>{{'VILLAGECLIENT' | translate}}</ion-label>
+    <ion-input type="text" formControlName="village_client" [disabled]="selectedTypeClient == 'Membre union'"></ion-input>
   </ion-item>
   <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['village_client'].hasError('required') && operation.controls['village_client'].touched">* le village du client est obligatoir!</div>
   
-  <ion-item>
-    <ion-label floating>OP client</ion-label>
-    <ion-input type="text" formControlName="op_client"></ion-input>
+  <ion-item *ngIf="selectedTypeClient">
+    <ion-label floating>{{'OPCLIENT' | translate}}</ion-label>
+    <ion-input type="text" formControlName="op_client" [disabled]="selectedTypeClient == 'Membre union'"></ion-input>
   </ion-item>
   <div style="padding-left: 15px;" class="error-box" *ngIf="operation.controls['op_client'].hasError('required') && operation.controls['op_client'].touched">* l'OP' du client est obligatoir!</div>
   
   <ion-item>
-    <ion-label floating>Observation</ion-label>
+    <ion-label floating>{{'OBSERVATION' | translate}}</ion-label>
     <ion-textarea formControlName="observation"></ion-textarea>
   </ion-item>
   
     <br>
-    <button ion-button type="submit" color="secondary" [disabled]="!operation.valid" block>Sauvegarder</button>
+    <button ion-button type="submit" color="secondary" [disabled]="!operation.valid" block>{{'SAUVEGARDER' | translate}}</button>
   </form>
-  <button ion-button color="primary" block (click)="annuler()">Annuler</button>
+  <button ion-button color="primary" block (click)="annuler()">{{'ANNULER' | translate}}</button>
 </ion-content>

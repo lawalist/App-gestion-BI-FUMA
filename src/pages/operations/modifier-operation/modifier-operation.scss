@@ -6,4 +6,10 @@ page-modifier-operation {
     .error-border {
         color: red;
     }
+
+    ion-auto-complete {
+        width: 100%;
+        //z-index: -100px;
+
+    }
 }

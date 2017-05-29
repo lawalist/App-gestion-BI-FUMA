@@ -8,30 +8,50 @@
 <ion-header>
   <ion-navbar color="fuma_primary">
     <!--button ion-button menuToggle><ion-icon name="options" ></ion-icon></button-->
-    <ion-title>opérations</ion-title>
-    <ion-buttons end>
-      <button ion-button menuToggle><ion-icon name="options" ></ion-icon></button>
+    
+    <ion-toolbar>
+      <ion-buttons start>
+      <button ion-button icon-only color="royal" (click) = "sync()" >
+        <ion-icon name="sync"></ion-icon>
+      </button>
     </ion-buttons>
+    <ion-title>{{'OPERATIONS' | translate}}</ion-title>
+      <ion-buttons end>
+        <button ion-button icon-only color="royal" menuToggle>
+          <ion-icon name="options"></ion-icon>
+        </button>
+        <!--button ion-button menuToggle><ion-icon name="options" ></ion-icon></button-->
+      </ion-buttons>
+    </ion-toolbar>
   </ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
+  
   <ion-list>
+    <ion-item *ngIf = "tacheAdmin == 'admin'">
+      <ion-label floating>Choisir boutique</ion-label>
+      <ion-select [(ngModel)] = "selectedboutique" (ionChange)="choixBoutique()" cancelText="Annuler" okText="Ok" >
+        <ion-option value="" selected disabled>Selectionnez une boutique</ion-option>
+        <ion-option *ngFor="let bout of boutiques" [value]=bout > {{bout.id}} </ion-option>
+      </ion-select>
+    </ion-item>
+
     <ion-item>
-      <ion-label floating>Type opération</ion-label>
+      <ion-label floating>{{'TYPEOPERATION' | translate}}</ion-label>
       <ion-select [(ngModel)] = "selectedTypeOperation" (ionChange)="filterTypeOperation()" cancelText="Annuler" okText="Ok" >
-        <ion-option value="VENTE">VENTE</ion-option>
-        <ion-option value="DEPENSE">DEPENSE</ion-option>
-        <ion-option value="DECAISSEMENT">DECAISSEMENT</ion-option>
-        <ion-option value="LOCATION" >LOCATION</ion-option>
-        <ion-option value="RETOUR LOCATION">RETOUR LOCATION</ion-option>
-        <ion-option value="SUBVENTION">SUBVENTION</ion-option>
-        <ion-option value="TOUS">TOUS</ion-option>
+        <ion-option value="VENTE">{{'VENTE' | translate}}</ion-option>
+        <ion-option value="DEPENSE">{{'DEPENSE' | translate}}</ion-option>
+        <ion-option value="DECAISSEMENT">{{'DECAISSEMENT' | translate}}</ion-option>
+        <ion-option value="LOCATION" >{{'LOCATION' | translate}}</ion-option>
+        <ion-option value="RETOUR LOCATION">{{'RETOURLOCATION' | translate}}</ion-option>
+        <ion-option value="SUBVENTION">{{'SUBVENTION' | translate}}</ion-option>
+        <ion-option value="TOUS">{{'TOUS' | translate}}</ion-option>
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-searchbar placeholder="Recherche produit" [showCancelButton]="shouldShowCancel" (ionInput)="getItems($event)"></ion-searchbar>
+      <ion-searchbar placeholder="{{'RECHERCHEPRODUIT' | translate}}" [showCancelButton]="shouldShowCancel" (ionInput)="getItems($event)"></ion-searchbar>
     </ion-item>
   </ion-list>
   <ion-list>
@@ -39,21 +59,21 @@
       <!--ion-row>
         <ion-col-->
           
-           <h3><strong>Client:</strong> {{operation.nom_client}}</h3>
-           <h3><strong>Produit:</strong> {{operation.nom_produit}}</h3>
+           <h3><strong>{{'CLIENT' | translate}}:</strong> {{operation.nom_client}}</h3>
+           <h3><strong>{{'PRODUIT' | translate}}:</strong> {{operation.nom_produit}}</h3>
         <!--/ion-col>
         <ion-col class="aligneDate"-->
-          <p><strong>Date:</strong> {{operation.date | date: 'dd-MM-yyyy'}}</p>
+          <p><strong>{{'DATE' | translate}}:</strong> {{operation.date | date: 'dd-MM-yyyy'}}</p>
         <!--/ion-col>
       </ion-row-->
     </ion-item>
 
     <ion-item *ngIf="!operations.length > 0">
-      <div class="message">La liste est vide !</div>
+      <div class="message">{{'LISTEVIDE' | translate}}</div>
     </ion-item>    
   </ion-list>
 
-  <ion-fab bottom right>
+  <ion-fab bottom right *ngIf = "tacheAdmin != 'admin'">
     <button ion-fab mini (click)="ajouter(last_id, produits, boutique_id)" ><ion-icon name="add"></ion-icon></button>
   </ion-fab>
 </ion-content>

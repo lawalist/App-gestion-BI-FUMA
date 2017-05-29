@@ -3,6 +3,8 @@ import { NavController, NavParams, ToastController, AlertController } from 'ioni
 import { Validators, FormBuilder } from '@angular/forms';
 import { GestionBoutique } from '../../../../providers/gestion-boutique'
 import { Storage } from '@ionic/storage';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../../global-variables/variable';
 
 /*
   Generated class for the ModifierTypeProduit page.
@@ -19,7 +21,9 @@ export class ModifierTypeProduitPage {
   typeProduit: any;
   ancienTypeProduit: any;
 
-  constructor(public alertCtl: AlertController, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public storage: Storage, public toastCtl: ToastController, public gestionService: GestionBoutique) {
+  constructor(public translate: TranslateService, public alertCtl: AlertController, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public storage: Storage, public toastCtl: ToastController, public gestionService: GestionBoutique) {
+    
+    this.translate.setDefaultLang(global.langue);
     this.ancienTypeProduit = this.navParams.get('typeProduit');
 
     this.typeProduit = this.formBuilder.group({
@@ -29,8 +33,9 @@ export class ModifierTypeProduitPage {
     });
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ModifierTypeProduitPage');
+  ionViewWillEnter() {
+    this.translate.setDefaultLang(global.langue);
+    //console.log('ionViewDidLoad ModifierTypeProduitPage');
   }
   
  

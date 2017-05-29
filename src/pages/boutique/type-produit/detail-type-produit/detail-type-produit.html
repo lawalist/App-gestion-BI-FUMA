@@ -7,12 +7,54 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>detail-type-produit</ion-title>
+    <ion-title>{{'DETAIL-TYPE-PRODUIT' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <ion-card>
+    <ion-card-content>
+      <h2>{{'TYPEPRODUIT' | translate}}: <strong>{{typeProduit.nom}}</strong></h2>
+    </ion-card-content>
+  </ion-card>
 
+
+  <ion-card *ngIf = "tacheAdmin == 'admin'">
+    <ion-card-header>
+      <strong>Info sup</strong>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <h2><strong>created_at:</strong> {{typeProduit.created_at}}</h2>
+          <h2><strong>created_by:</strong> {{typeProduit.by}}</h2>
+          <h2><strong>updatet_at:</strong> {{typeProduit.updatet_at}}</h2>
+          <h2><strong>updatet_by:</strong> {{typeProduit.updatet_by}}</h2>
+          <h2><strong>deleted_at:</strong> {{typeProduit.deleted_at}}</h2>
+          <h2><strong>deleted_by:</strong> {{typeProduit.deleted_by}}</h2>
+          <h2><strong>annuler_at:</strong> {{typeProduit.annuler_at}}</h2>
+          <h2><strong>annuler_bye:</strong> {{typeProduit.annuler_by}}</h2>
+          <!--h2><strong>prenom:</strong> {{operation.prenom_gerant}}</h2-->
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+    <ion-list *ngIf="produits.length > 0">
+      <ion-list-header>
+        <strong>{{'LISTEPRODUITSASSOCIES' |translate}}</strong>
+      </ion-list-header>
+      <ion-item *ngFor="let prod of produits" (click)="detailProduit(prod, boutique_id)">
+        <p>{{'CODEPRODUIT' | translate}}: {{prod.code_produit}} </p>
+        <p>{{'NOMPRODUIT' | translate}}: {{prod.nom_produit}} </p>
+        <p>{{'QUANTITEDISPONIBLE' | translate}}: {{prod.quantite}} {{prod.unite_mesure}}</p>
+        <p>{{'PRIXUNITAIRE' | translate}}: {{prod.prix}}</p>
+      </ion-item>
+    </ion-list>
+
+  <ion-item *ngIf="!produits.length > 0">
+    <div class="message">{{'LISTEVIDE' | translate}}</div>
+  </ion-item>
 </ion-content>

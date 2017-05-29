@@ -2,8 +2,12 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, MenuController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { LoginPage } from '../login/login';
+import { ConfigBoutiquePage } from '../accueil/config-boutique/config-boutique';
 import { GestionBoutique } from '../../providers/gestion-boutique';
 import { Validators, FormBuilder } from '@angular/forms';
+import { Storage } from '@ionic/storage';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../global-variables/variable';
 
 /*
   Generated class for the Register page.
@@ -24,7 +28,8 @@ export class RegisterPage {
   confmdpass: string;
   registerForm: any;
 
-  constructor(public navCtrl: NavController, public menuCtrl: MenuController, public formBuilder: FormBuilder, public navParams: NavParams, public loadinCtl: LoadingController, public gestionService: GestionBoutique) {
+  constructor(public translate: TranslateService, public navCtrl: NavController, public storage: Storage, public menuCtrl: MenuController, public formBuilder: FormBuilder, public navParams: NavParams, public loadinCtl: LoadingController, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     let d: Date = new Date();
     let s = this.createDate(d.getDate(), d.getMonth(), d.getFullYear());
     this.registerForm = this.formBuilder.group({
@@ -62,7 +67,8 @@ export class RegisterPage {
   }
 
 
-  ionViewDidLoad() {
+  ionViewWillEnter() {
+    this.translate.use(global.langue);
     console.log('ionViewDidLoad RegisterPage');
   }
 
@@ -91,11 +97,11 @@ export class RegisterPage {
         if(err){
           loading.dismissAll();
           if (err.name === 'conflict') {
-              alert('nom utilisateur existe');
+              alert('Nom utilisateur existe déjà');
             }else  if (err.name === 'forbidden') {
-              alert('nom utilisateur invalide');
+              alert('Nom utilisateur invalide');
             } else{
-              alert('erreur');
+              alert('Une erreur s\'est produite lors de la tentative de connexion au serveur');
             }
         }else if(response){
           loading.dismissAll();
@@ -103,7 +109,7 @@ export class RegisterPage {
           //this.navCtrl.setRoot(TabsPage);
         }else{
           loading.dismissAll();
-          alert('echec');
+          alert('echec d\'authentification');
         }
           
       });
@@ -128,6 +134,10 @@ export class RegisterPage {
       }
     };
     this.gestionService.remote.login(username, mdpass, ajaxOpts, (err, response) => {
+      let user: any = {
+        'username': username,
+        'mdpass': mdpass
+      }
       if (err) {
         loading.dismissAll();
         if (err.name === 'unauthorized') {
@@ -138,15 +148,38 @@ export class RegisterPage {
           
         }
       }else if(response){
-        loading.dismissAll();
+        
         //alert('success');
         //this.MyApp.setPage();
         //let m = MyApp.g
         //m.setPage();
-        this.navCtrl.setRoot(TabsPage);
-        this.enableAuthenticatedMenu();
+        this.storage.set('user', user);
+        this.gestionService.remote.getUser(username, (err, us) => {
+          if (err) {
+            if (err.name === 'not_found') {
+              // typo, or you don't have the privileges to see this user
+              alert('Privilèges insuffiasants');
+            } else {
+              // some other error
+              alert('Erreur');
+            }
+          } else {
+            // response is the user object
+           this.storage.set('gerant', us);
+          }
+        });
+        loading.dismissAll();
+        if(global.configOK == false){
+          this.enableAuthenticatedMenu();
+          this.navCtrl.push(ConfigBoutiquePage);
+        }else{
+          this.enableAuthenticatedMenu();
+          this.navCtrl.setRoot(TabsPage);
+        }
+        
+        
   
-      }else{
+      }else{ 
         loading.dismissAll();
         alert('echec');
       }

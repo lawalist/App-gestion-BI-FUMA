@@ -3,6 +3,8 @@ import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { Validators, FormBuilder } from '@angular/forms';
 import { GestionBoutique } from '../../../../providers/gestion-boutique';
 import { Storage } from '@ionic/storage';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../../global-variables/variable';
 
 /*
   Generated class for the AjouterProduit page.
@@ -27,7 +29,8 @@ export class AjouterProduitPage {
   last_id: any
   code_prod: any = '';
 
-  constructor(public toastCtl: ToastController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
+  constructor(public translate: TranslateService, public toastCtl: ToastController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     this.last_id = this.navParams.data.last_id;
     this.boutique_id = this.navParams.data.boutique_id;
     this.calculID();
@@ -41,17 +44,38 @@ export class AjouterProduitPage {
     this.unites = ['kg' , 'g', 'sachet de 100 grammes', 'sachet de 25 grammes', 'bloc de 100 grammes', 'tia', 'litre', 
     'comprimé', 'autre'];
 
+    let d: Date = new Date();
+    let s = this.createDate(d.getDate(), d.getMonth(), d.getFullYear());
+
     this.produit = this.formBuilder.group({
       _id: [this.boutique_id + ':produit:' + this.code_prod, Validators.required],
       type_produit: ['', Validators.required],
       code_produit: [this.code_prod, Validators.required],
       type: ['produit'],
+      date: [s, Validators.required],
       nom_produit: ['', Validators.required],
       quantite: [0, Validators.required],
       prix: [0, Validators.required],
       unite_mesure: ['', Validators.required],
       prix_total: [0, Validators.required]
     }); 
+  }
+
+  createDate(jour: any, moi: any, annee: any){
+    let s = annee+'-';
+    moi += 1;
+    if(moi < 10){
+      s += '0'+moi+'-';
+    }else{
+      s += moi+'-';
+    }
+
+    if(jour < 10){
+      s += '0'+jour;
+    }else{
+      s += jour;
+    }
+    return s;
   }
 
   calculID(){
@@ -77,7 +101,8 @@ export class AjouterProduitPage {
     //return matricule;
   }
 
-  ionViewDidLoad() {
+  ionViewWillEnter() {
+    this.translate.use(global.langue);
   }
 
   onKeyupQuantite(){

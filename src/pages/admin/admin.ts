@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, ToastController, LoadingController } from 'ionic-angular';
+import { NavController, NavParams, AlertController, ToastController, ModalController, LoadingController } from 'ionic-angular';
+import { TranslateService } from '@ngx-translate/core';
 import { BoutiquePage } from '../boutique/boutique';
 import { AjouterBoutiquePage } from '../boutique/ajouter-boutique/ajouter-boutique';
 import { ProduitPage } from '../boutique/produit/produit';
@@ -9,6 +10,8 @@ import { GerantPage } from '../boutique/gerant/gerant';
 import { TypeProduitPage } from '../boutique/type-produit/type-produit';
 import { global } from '../../global-variables/variable';
 import { AccueilPage } from '../accueil/accueil';
+import { LanguePage } from '../langue/langue';
+import { App } from 'ionic-angular';
 
 
 /* 
@@ -25,14 +28,21 @@ export class AdminPage {
 
   bID: any = '';
 
-  constructor(public navCtrl: NavController, public loadingCtl: LoadingController, public toastCtl: ToastController, public navParams: NavParams, public alertCtl: AlertController, public storage: Storage, public gestionService: GestionBoutique) {}
+  constructor(public modalCtl: ModalController, public appCtl: App, public translate: TranslateService, public navCtrl: NavController, public loadingCtl: LoadingController, public toastCtl: ToastController, public navParams: NavParams, public alertCtl: AlertController, public storage: Storage, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
+  }
 
   ionViewWillEnter() {
+    this.translate.use(global.langue);
     this.storage.get('boutique_id').then((id) => {
       if(id){
         this.bID = id;
       }
     });
+  }
+
+  langue(){
+    this.navCtrl.push(LanguePage);
   }
 
     ipServeur(){
@@ -122,7 +132,7 @@ export class AdminPage {
                     //retry: true
                     //continuous: true
                     filter: (doc) => {
-                      return doc._id.match(this.bID+'[0-9a-zA-Z_:]*');
+                      return doc._id.match('boutique:'+this.bID+'[0-9a-zA-Z_:]*');
                     }
                     }).on('change', (info) => {
                       // handle change
@@ -156,13 +166,13 @@ export class AdminPage {
                         continuous: true,
                         //filter: 'mydesign/myfilter'
                         filter: (doc) => {
-                          return doc._id.match(data.boutique_id+'[0-9a-zA-Z_:]*');
+                          return doc._id.match('boutique:'+data.boutique_id+'[0-9a-zA-Z_:]*');
                         }
                       }).on('change',  (info) => {
                         // handle change
                       }).on('paused',  (err) => {
                           this.gestionService.getBoutiqueById(data.boutique_id).then((boutique) => {
-                          this.storage.set('boutique_id', boutique._id);
+                          this.storage.set('boutique_id', boutique.id);
 
                           loat.dismissAll();
                           let toast = this.toastCtl.create({
@@ -196,7 +206,7 @@ export class AdminPage {
                         // a document failed to replicate (e.g. due to permissions)
                       }).on('complete',  (info) => {
                         this.gestionService.getBoutiqueById(data.boutique_id).then((boutique) => {
-                          this.storage.set('boutique_id', boutique._id);
+                          this.storage.set('boutique_id', boutique.id);
 
                           loat.dismissAll();
                           let toast = this.toastCtl.create({
@@ -276,9 +286,24 @@ export class AdminPage {
         {
           text: 'Confirmer',
           handler: () => {
-            this.gestionService.reset();
+            //this.gestionService.reset();
             this.storage.remove('boutique_id');
-            this.navCtrl.setRoot(AccueilPage);
+            this.storage.remove('tache').catch((err) => console.log(err));
+            this.storage.remove('langue').catch((err) => console.log(err));
+            this.storage.remove('gerant').catch((err) => console.log(err));
+            this.storage.remove('user').catch((err) => console.log(err));
+            this.gestionService.logout();
+            this.gestionService.data = null;
+  
+            this.gestionService.db.destroy().then(() => {
+              
+              window.location.reload();
+              this.appCtl.getActiveNav().setRoot(AccueilPage);
+              //console.log("database removed");
+              //this.gestionService.db = new PouchDB('stock-fuma');
+              //this.navCtrl.setRoot(AccueilPage);
+            });
+            //this.navCtrl.setRoot(AccueilPage);
           }
         }
       ]

@@ -3,8 +3,11 @@ import { NavController, NavParams, ToastController, ViewController, AlertControl
 import { Validators, FormBuilder } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 
+import { AutoCompletion } from '../../../providers/auto-completion';
 import { GestionBoutique } from '../../../providers/gestion-boutique';
 import { testQuantite, testQuantitePositive } from '../../../monValidator/monValidator';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../global-variables/variable';
 
 /*
   Generated class for the AjouterOperation page.
@@ -29,12 +32,15 @@ export class AjouterOperationPage {
   selectedProduit: any;
   selectedTypeOperation: any = '';
   selectedTypeProduit: any;
+  selectedTypeClient: any;
   selectedProduitPrixUnitaire: any = '';
+  mat_client: any = 'NA';
   quantiteMax: any = '';
   textQuantite: string = 'Quantité';
   textQuantiteMax: any = '';
   typeProduits: any = [];
   typeOperation: any = [];
+  typeClient: any = [];
   boutique: any = [];
   gerants: any = [];
   boutique_id: any;
@@ -45,8 +51,11 @@ export class AjouterOperationPage {
     "nom": "Argent"
   },];
 
+  gerant:any = {};
+
   produitDecaissement: any = [{
-      "_id": 'B:produit:AG999',
+      "_id": 'B:produit:AG', 
+      "code_produit": "AG",
       "type_produit": "Argent",
       "nom_produit": "Argent",
       "quantite": 0,
@@ -54,15 +63,21 @@ export class AjouterOperationPage {
       "unite_mesure": "F",
       "prix_total": 0
     }];
-  
+    
 
-  constructor(public storage: Storage, public navCtrl: NavController, public viewCtl: ViewController, public alertCtl: AlertController, public navParams: NavParams, public toastCtl: ToastController, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
+  constructor(public translate: TranslateService, public ServiceAutoCompletion: AutoCompletion, public storage: Storage, public navCtrl: NavController, public viewCtl: ViewController, public alertCtl: AlertController, public navParams: NavParams, public toastCtl: ToastController, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     this.last_id = this.navParams.data.last_id;
     //this.last_id = this.calculID(this.last_id);
     //this.tousProduits = this.navParams.data.produits;
     this.typeOperation = ['VENTE' , 'DEPENSE', 'DECAISSEMENT', 'LOCATION', 'RETOUR LOCATION', 'SUBVENTION'];
+    this.typeClient = ['Membre union' , 'Autre'];
 
     this.boutique_id = this.navParams.data.boutique_id;
+
+    this.gestionService.getPlageDocs(this.boutique_id+':produit', this.boutique_id+':produit:\ufff0').then((res) => {
+      this.ServiceAutoCompletion.data = res;
+    })
 
     this.gestionService.getBoutiqueById(this.boutique_id).then((boutique) => {
       this.boutique = boutique;
@@ -82,14 +97,15 @@ export class AjouterOperationPage {
         type: ['', Validators.required],
         date: [s, Validators.required],
         //type_produit: ['', Validators.required],
-        type_produit: ['', Validators.required],
-        code_produit: ['', Validators.required],
+        type_client: ['', Validators.required],
+        type_produit: [''],
+        code_produit: [''],
         nom_produit: ['', Validators.required],
         unite: [''],
         quantite: [this.quantiteMax, Validators.compose([Validators.required])],
         prix_unitaire: [this.selectedProduit.prix, Validators.required],
         montant_total: [this.totalPrix, Validators.compose([Validators.required])],
-        matricule_client: [''],
+        matricule_client: [this.mat_client, Validators.required],
         nom_client: [''],
         sex_client: [''],
         village_client: [''],
@@ -103,16 +119,17 @@ export class AjouterOperationPage {
         _id: [this.last_id, Validators.required],
         type: ['', Validators.required],
         code_operation: [this.code_op, Validators.required],
+        type_client: ['', Validators.required], 
         //type_produit: ['', Validators.required],
-        type_produit: ['', Validators.required],
-        code_produit: ['', Validators.required],
+        type_produit: [''], 
+        code_produit: [''],
         nom_produit: ['', Validators.required],
         unite: [''],
         quantite: [this.quantiteMax, Validators.compose([Validators.required])],
         prix_unitaire: [this.prixUnitaire, Validators.required],
         montant_total: [this.totalPrix, Validators.compose([Validators.required])],
         date: [s, Validators.required],
-        matricule_client: [''],
+        matricule_client: [this.mat_client, Validators.required],
         nom_client: [''],
         sex_client: [''],
         village_client: [''],
@@ -123,6 +140,7 @@ export class AjouterOperationPage {
   }
 
   ionViewWillLoad() {
+    this.translate.use(global.langue);
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getPlageDocs(id + ':gerant', id + ':gerant:\ufff0').then((data) => {
          this.gerants = data;
@@ -137,7 +155,21 @@ export class AjouterOperationPage {
          this.boutique = data;
        });*/
       });
+
+      this.storage.get('gerant').then((gerant) => {
+        this.gerant = gerant;
+      }, err => {
+        alert('Erreur!! \nPersonne n\'est connecté')
+      });
   
+  }
+
+  choixTypeClient(){
+    if(this.selectedTypeClient === 'Membre union'){
+      this.mat_client = '';
+    }else{
+      this.mat_client = 'NA';
+    }
   }
 
   choixTypeOperation(){
@@ -152,7 +184,12 @@ export class AjouterOperationPage {
         //this.typeProduits
         //this.produits
         this.textQuantiteMax = 'Solde caisse disponible: '+ this.boutique.solde_caisse + 'FCFA';
-        //this.selectedProduit = this.produitDecaissement[0];
+        this.selectedProduit = this.produitDecaissement[0];
+        this.textQuantite = 'Quantité (' + this.selectedProduit.unite_mesure +')';
+        this.selectedProduitPrixUnitaire = this.selectedProduit.prix;
+        this.selectedTypeProduit = this.selectedProduit.type_produit;
+        this.nomProduit = this.selectedProduit.nom_produit;
+        //this.selectedProduit = this.produitDecaissement[0]; 
         //this.selectedTypeProduit = this.typeProduitDecaissement[0];
 
         break;
@@ -513,15 +550,18 @@ export class AjouterOperationPage {
          op.type_produit = this.selectedProduit.type_produit;
          op.nom_produit = this.selectedProduit.nom_produit;
          op.unite = this.selectedProduit.unite_mesure;
+         op.matricule_client = this.mat_client;
+         op.matricule_gerant = this.gerant.name;
+         op.nom_gerant = this.gerant.nom;
 
          //chercher les information concernant le gérant et les mettre dans le detail de l'operation
-         this.gerants.forEach((gerant, index) => {
+         /*this.gerants.forEach((gerant, index) => {
            if(gerant.status == 'En fonction'){
              op.matricule_gerant = gerant.id;
              op.nom_gerant = gerant.nom;
              //op.prenom_gerant = gerant.prenom;
            }
-         });
+         });*/
 
           let toast: any;
           let alert: any;
@@ -822,4 +862,39 @@ export class AjouterOperationPage {
     //this.viewCtl.dismiss();
     this.navCtrl.pop();
   }
+
+  itemSelected(ev: any){
+    //alert(ev.code_produit);
+    this.gestionService.getDocById(this.boutique_id+':produit:'+ev.code_produit).then((produit) => {
+      this.selectedProduit = produit;
+
+      this.textQuantite = 'Quantité (' + this.selectedProduit.unite_mesure +')';
+      this.selectedProduitPrixUnitaire = this.selectedProduit.prix;
+      this.selectedTypeProduit = this.selectedProduit.type_produit;
+      this.nomProduit = this.selectedProduit.nom_produit;
+      let op = this.operation.value;
+    
+      switch (op.type){
+        case 'VENTE':
+          this.textQuantiteMax = 'Stock disponigle: ' +this.selectedProduit.quantite + ' (' + this.selectedProduit.unite_mesure +')';
+          break;
+        case 'DEPENSE':
+          this.textQuantiteMax = 'Solde trésor disponible: '+ this.boutique.solde_tresor + 'FCFA';
+          break;
+          case 'DECAISSEMENT':
+            this.textQuantiteMax = 'Solde caisse disponible: '+ this.boutique.solde_caisse + 'FCFA';
+          break;
+        case 'LOCATION':
+          this.textQuantiteMax = 'Stock disponigle: '+ this.selectedProduit.quantite + ' (' + this.selectedProduit.unite_mesure +')';
+          break;
+          case 'RETOUR LOCATION':
+            this.textQuantiteMax = '';
+            this.selectedProduitPrixUnitaire = 0;
+          break;
+        case 'SUBVENTION':
+          this.textQuantiteMax = '';
+          break;
+      }
+    }) ;
+  }  
 }

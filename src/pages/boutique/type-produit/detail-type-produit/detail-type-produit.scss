@@ -1,3 +1,17 @@
 page-detail-type-produit {
-
+     img{
+        object-fit: cover
+    }
+    ion-thumbnail{
+        margin:2px
+    }
+    .message{
+        background:map-get($colors, fuma-green-dark);
+        color:map-get($colors, fuma-green-light);
+        width:100%
+    }
+    .badger-counter-item{
+        background-color: rgba(0,0,0,0);
+        border-bottom-width: 0;
+    }
 }

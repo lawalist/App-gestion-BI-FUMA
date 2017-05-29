@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>profile</ion-title>
+    <ion-title>{{'PROFILE' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -16,7 +16,7 @@
 <ion-content padding>
   <div *ngIf="user">
     <h4 style="text-align: center; color: seagreen">
-      Informations utilisateur
+      {{'INFOUTILISATEUR' | translate}}
     </h4>
     <ion-card>
       <!--ion-card-header>
@@ -25,11 +25,12 @@
       <!--ion-card-content-->
       <ion-list>
         <ion-item>
-          <h2><strong>Nom:</strong> {{user.nom}} </h2>
-          <h2><strong>Nom utilisateur:</strong> {{user.name}} </h2>
-          <h2><strong>E-mail:</strong> {{user.email}} </h2>
-          <h2><strong>sex:</strong> {{user.sex}} </h2>
-          <h2><strong>Date enregistrement:</strong> {{user.date | date: 'dd-MM-yyyy'}}</h2>
+          <h2><strong>{{'NOM' | translate}}:</strong> {{user.nom}} </h2>
+          <h2><strong>{{'NOMUTILISATEUR' | translate}}:</strong> {{user.name}} </h2>
+          <h2><strong>{{'EMAIL' | translate}}:</strong> {{user.email}} </h2>
+          <h2><strong>{{'SEX' | translate}}:</strong> {{user.sex}} </h2>
+          <h2><strong>{{'DATEENREGISTREMENT' | translate}}:</strong> {{user.date | date: 'dd-MM-yyyy'}}</h2>
+          <h2><strong>Role:</strong> <span *ngFor="let role of user.roles" > {{role}}</span></h2>
         </ion-item>
       </ion-list>
       <!--/ion-card-content-->

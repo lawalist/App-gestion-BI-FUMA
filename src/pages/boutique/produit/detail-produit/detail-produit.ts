@@ -3,6 +3,8 @@ import { NavController, NavParams, AlertController, ToastController } from 'ioni
 import { GestionBoutique } from '../../../../providers/gestion-boutique';
 
 import { ModifierProduitPage } from '../modifier-produit/modifier-produit';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../../global-variables/variable';
 
 
 /*
@@ -20,13 +22,16 @@ export class DetailProduitPage {
   boutique_id: any;
   produit: any;
   typeProduits: any = [];
+  tacheAdmin = global.tacheAdmin;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtl: AlertController, public toastCtl: ToastController, public gestionService: GestionBoutique) {
+  constructor(public translate: TranslateService, public navCtrl: NavController, public navParams: NavParams, public alertCtl: AlertController, public toastCtl: ToastController, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     this.boutique_id = this.navParams.data.boutique_id;
     this.produit = this.navParams.data.produit;
   }
 
   ionViewDidEnter(){
+    this.translate.use(global.langue);
     /*this.gestionService.getBoutiqueById(this.boutique_id).then((res) => {
       let v = res.produits;
       this.typeProduits = res.type_produit;
@@ -85,6 +90,12 @@ export class DetailProduitPage {
               this.gestionService.updateBoutique(boutique);
             })*/
             this.gestionService.deleteDoc(produit);
+            let toast = this.toastCtl.create({
+              message:'Produit supprimé avec succès!',
+              position: 'top',
+              duration: 3000
+            });
+            toast.present();
             this.navCtrl.pop();
           }
         }

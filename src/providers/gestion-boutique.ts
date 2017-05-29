@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Http } from '@angular/http';
-import {LoadingController, AlertController } from 'ionic-angular';
+import {LoadingController, AlertController, ToastController } from 'ionic-angular';
 import 'rxjs/add/operator/map';
 import { global } from '../global-variables/variable';
 //import PouchDB from 'pouchdb';
@@ -39,7 +39,7 @@ export class GestionBoutique {
   }
 
 
-  constructor(public http: Http, public loadingCtrl: LoadingController, public alertCtl: AlertController, public storage: Storage) {
+  constructor(public toastCtl: ToastController, public http: Http, public loadingCtrl: LoadingController, public alertCtl: AlertController, public storage: Storage) {
     this.db = new PouchDB('stock-fuma');
     //this.db.changes({live: true, since: 'now', include_docs: true}).on('change', (change) => this.listener.emit(this.handleChange(change)));
     
@@ -50,15 +50,22 @@ export class GestionBoutique {
         "auth.password": "admin"
     }*/
 
-    this.remote = new PouchDB('http://'+global.ip_serveur+':5984/stock-fuma', this.pouchOpts);
+    this.remote = new PouchDB('http://'+global.ip_serveur+'/stock_bi_fuma', this.pouchOpts);
     //this.remote = 'http://localhost:5984/stock-fuma'; 
 
     //this.db.sync(this.remote, this.options);
-    this.storage.get('boutique_id').then((id) => {
-      if(id){
-        this.dbSync(id);
+    this.storage.get('tache').then((t) => {
+      if(t){ 
+        this.dbSyncAdmin();
+      }else{
+         this.storage.get('boutique_id').then((id) => {
+          if(id){
+            this.dbSync(id);
+          }
+        });
       }
-    });
+    })
+   
   }
 
   createDataBase(){
@@ -107,6 +114,7 @@ export class GestionBoutique {
       }
     };
     this.showLoader('Authentification...');
+    //this.remote.login(username, mdpass, ajaxOpts).then((err, response) =
     this.remote.login(username, mdpass, ajaxOpts, (err, response) => {
       if (err) {
         this.loading.dismiss();
@@ -134,13 +142,14 @@ export class GestionBoutique {
     this.remote.logout((err, response) => {
       if (err) {
         this.loading.dismissAll();
-        return 'echec connexion';
+        return 'echec déconnexion';
       }else if(response){
         //this.data = null;
         //this.db.destroy().then(() => {
         //  console.log("base de données supprimée");
         //});
-        
+        this.storage.remove('gerant').catch((err) => console.log(err));
+        this.storage.remove('user').catch((err) => console.log(err));
         this.loading.dismissAll();
         return 'success';
       }else{
@@ -232,7 +241,22 @@ export class GestionBoutique {
       filter: (doc) => {
         return doc._id.match(id+'[0-9a-zA-Z_:]*');
       }
-    });/*.on('change',  (info) => {
+    }).on('change',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('paused',  (err) => {
+      //alert('error');
+    }).on('active',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('denied',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('error',  (err) => {
+      //alert('error');
+    });
+                
+    /*.on('change',  (info) => {
       // handle change
     }).on('paused',  (err) => {
         this.getBoutiqueById(id).then((boutique) => {
@@ -270,6 +294,187 @@ export class GestionBoutique {
     
   }
 
+  dbSyncAdmin(){
+    this.db.sync(this.remote, {
+      live: true,
+      retry: true,
+      continuous: true,
+      //filter: 'mydesign/myfilter'
+    }).on('change',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('paused',  (err) => {
+      //alert('error');
+    }).on('active',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('denied',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('error',  (err) => {
+      //alert('error');
+    });
+                
+    
+  }
+
+
+  dbSyncAvecLoading(id, view){
+    /*let load = this.loadingCtrl.create({
+      content: 'Synchronisation en cours...',
+    });*/
+
+    let toast = this.toastCtl.create({
+      message: 'Synchronisation en cours...',
+      duration: 3000,
+      position: 'top'
+    });
+
+    toast.present();
+
+    //load.present();
+    this.db.sync(this.remote, {
+      live: true,
+      retry: true,
+      continuous: true,
+      //filter: 'mydesign/myfilter'
+      filter: (doc) => {
+        return doc._id.match(id+'[0-9a-zA-Z_:]*');
+      }
+    }).on('change',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('paused',  (err) => {
+      //load.dismissAll();
+      let toast = this.toastCtl.create({
+        message: 'Synchronisation terminée avec succes!',
+        duration: 3000,
+        position: 'top'
+      });
+
+      toast.present();
+      view;
+      //alert('Synchronisation terminée avec succes');
+      //alert('error');
+    }).on('complete',  (err) => {
+      let toast = this.toastCtl.create({
+        message: 'Synchronisation terminée avec succes!',
+        duration: 4000,
+        position: 'top'
+      });
+
+      toast.present();
+      view;
+      //load.dismissAll();
+      //alert('Synchronisation terminée avec succes');
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('active',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('denied',  (err) => {
+      //load.dismissAll();
+      let toast = this.toastCtl.create({
+        message: 'Erreur de synchronisation, accès refusé!',
+        duration: 4000,
+        position: 'top'
+      });
+
+      toast.present();
+      //alert('Erreur de synchronisation, acces refusé!');
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('error',  (err) => {
+      let toast = this.toastCtl.create({
+        message: 'Erreur synchronisation, problème de connexion avec le serveur!',
+        duration: 4000,
+        position: 'top'
+      });
+
+      toast.present();
+      //load.dismissAll();
+      //alert('Erreur synchronisation, problème de connexion avec le serveur!');
+      //alert('error');
+    });
+  }
+
+dbSyncAdminAvecLoading(view){
+    /*let load = this.loadingCtrl.create({
+      content: 'Synchronisation en cours...',
+    });*/
+
+    let toast = this.toastCtl.create({
+      message: 'Synchronisation en cours...',
+      duration: 3000,
+      position: 'top'
+    });
+
+    toast.present();
+
+    //load.present();
+    this.db.sync(this.remote, {
+      live: true,
+      retry: true,
+      continuous: true
+      //filter: 'mydesign/myfilter'
+    }).on('change',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('paused',  (err) => {
+      //load.dismissAll();
+      let toast = this.toastCtl.create({
+        message: 'Synchronisation terminée avec succes!',
+        duration: 3000,
+        position: 'top'
+      });
+
+      toast.present();
+      view;
+      //alert('Synchronisation terminée avec succes');
+      //alert('error');
+    }).on('complete',  (err) => {
+      let toast = this.toastCtl.create({
+        message: 'Synchronisation terminée avec succes!',
+        duration: 4000,
+        position: 'top'
+      });
+
+      toast.present();
+      view;
+      //load.dismissAll();
+      //alert('Synchronisation terminée avec succes');
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('active',  (err) => {
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('denied',  (err) => {
+      //load.dismissAll();
+      let toast = this.toastCtl.create({
+        message: 'Erreur de synchronisation, accès refusé!',
+        duration: 4000,
+        position: 'top'
+      });
+
+      toast.present();
+      //alert('Erreur de synchronisation, acces refusé!');
+      //alert('Sync denied');
+      // a document failed to replicate (e.g. due to permissions)
+    }).on('error',  (err) => {
+      let toast = this.toastCtl.create({
+        message: 'Erreur synchronisation, problème de connexion avec le serveur!',
+        duration: 4000,
+        position: 'top'
+      });
+
+      toast.present();
+      //load.dismissAll();
+      //alert('Erreur synchronisation, problème de connexion avec le serveur!');
+      //alert('error');
+    });
+  }
+
+
   /*doSync(){
     this.db = new PouchDB('stock-fuma');
     this.db.changes({live: true, since: 'now', include_docs: true}).on('change', (change) => this.listener.emit(this.handleChange(change)));
@@ -285,11 +490,11 @@ export class GestionBoutique {
 }*/
 
   getBoutiqueById(id){
-    return this.db.get(id);
+    return this.db.get('boutique:'+id);
   }
 
   getRemoteBoutiqueById(id){
-    return this.remote.get(id);
+    return this.remote.get('boutique:'+id);
   }
 
   getDocById(id){
@@ -298,7 +503,7 @@ export class GestionBoutique {
 
   public checkExists(id: string) {
         return this.getBoutiqueById(id).then(result => {
-            if(!result.supprime || result.supprime === false){
+            if((!result.supprime || result.supprime === false ) && ( !result.annuler || result.annuler === false)){
                return true
             }else{
                return false
@@ -316,7 +521,7 @@ export class GestionBoutique {
 
     public checkRemoteExists(id: string) {
         return this.getRemoteBoutiqueById(id).then(result => {
-            if(!result.supprime || result.supprime === false){
+            if((!result.supprime || result.supprime === false ) && ( !result.annuler || result.annuler === false)){
                return true
             }else{
                return false
@@ -359,10 +564,10 @@ export class GestionBoutique {
           if(action === 'ajout'){
             this.data.push(row.doc);
           }else{
-            if(!row.doc.supprime || row.doc.supprime === false){
+            if((!row.doc.supprime || row.doc.supprime === false ) && ( !row.doc.annuler || row.doc.annuler === false)){
               this.data.push(row.doc);
             }
-          }
+          } 
         });
 
         resolve(this.data);
@@ -393,7 +598,7 @@ export class GestionBoutique {
           if(action === 'ajout'){
             data.push(row.doc);
           }else{
-            if(!row.doc.supprime || row.doc.supprime === false){
+            if((!row.doc.supprime || row.doc.supprime === false ) && ( !row.doc.annuler || row.doc.annuler === false)){
               data.push(row.doc);
             }
           }
@@ -408,66 +613,183 @@ export class GestionBoutique {
 
 
   createBoutique(boutique){
+    
     let dat = new Date();
     boutique.created_at = dat.toJSON();
     boutique.updatet_at = dat.toJSON();
-    boutique.created_by = '';
-    boutique.updated_by = '';
     boutique.deleted_at = '';
     boutique.deleted_by = '';
     boutique.supprime = false;
-    this.db.post(boutique);
+    boutique.annuler_at = '';
+    boutique.annuler_by = '';
+    boutique.annuler = false;
+    this.storage.get('gerant').then((gerant) => {
+      if(gerant){
+        boutique.created_by = gerant.name;
+        boutique.updated_by = gerant.name;
+        this.db.post(boutique); 
+      }else{
+        boutique.created_by = '';
+        boutique.updated_by = '';
+        this.db.post(boutique); 
+      }
+       
+    });
+    
   }
 
   createDoc(doc){
     let dat = new Date();
     doc.created_at = dat.toJSON();
     doc.updatet_at = dat.toJSON();
-    doc.created_by = '';
-    doc.updated_by = '';
+    //doc.created_by = '';
+    //doc.updated_by = '';
     doc.deleted_at = '';
     doc.deleted_by = '';
     doc.supprime = false;
-    this.db.put(doc);
+    doc.annuler_at = '';
+    doc.annuler_by = '';
+    doc.annuler = false;
+    this.storage.get('gerant').then((gerant) => {
+      if(gerant){
+        doc.created_by = gerant.name;
+        doc.updated_by = gerant.name;
+        this.db.post(doc); 
+      }else{
+        doc.created_by = '';
+        doc.updated_by = '';
+        this.db.put(doc); 
+      }
+       
+    });
+    
+    //this.db.put(doc);
   }
 
   updateBoutique(boutique){
     let dat = new Date();
     boutique.updatet_at = dat.toJSON();
-    boutique.updated_by = '';
+    //boutique.updated_by = '';
     boutique.deleted_at = '';
     boutique.deleted_by = '';
     boutique.supprime = false;
-    this.db.put(boutique).catch((err) => console.log(err));
+    boutique.annuler_at = '';
+    boutique.annuler_by = '';
+    boutique.annuler = false;
+    this.storage.get('gerant').then((gerant) => {
+      if(gerant){
+        //boutique.created_by = gerant.name;
+        boutique.updated_by = gerant.name;
+        this.db.put(boutique).catch((err) => console.log(err)); 
+      }else{
+        //boutique.created_by = '';
+        boutique.updated_by = '';
+        this.db.put(boutique).catch((err) => console.log(err)); 
+      }
+       
+    });
+    //this.db.put(boutique).catch((err) => console.log(err));
   }
 
   updateDoc(doc){
     let dat = new Date();
     doc.updatet_at = dat.toJSON();
-    doc.updated_by = '';
+    //doc.updated_by = '';
     doc.deleted_at = '';
     doc.deleted_by = '';
     doc.supprime = false;
-    this.db.put(doc).catch((err) => console.log(err));
+    doc.annuler_at = '';
+    doc.annuler_by = '';
+    doc.annuler = false;
+    this.storage.get('gerant').then((gerant) => {
+      if(gerant){
+        //doc.created_by = gerant.name;
+        doc.updated_by = gerant.name;
+        this.db.put(doc).catch((err) => console.log(err)); 
+      }else{
+       // doc.created_by = '';
+        doc.updated_by = '';
+        this.db.put(doc).catch((err) => console.log(err)); 
+      }
+       
+    });
+    
+    //this.db.put(doc).catch((err) => console.log(err));
   }
 
   deleteBoutique(boutique){
     let dat = new Date();
     boutique.deleted_at = dat.toJSON();
-    boutique.deleted_by = '';
+    //boutique.deleted_by = '';
     boutique.supprime = true;
-    this.db.put(boutique).catch((err) => console.log(err));
+    boutique.annuler_at = '';
+    boutique.annuler_by = '';
+    boutique.annuler = false;
+    this.storage.get('gerant').then((gerant) => {
+      if(gerant){
+        //boutique.created_by = gerant.name;
+        boutique.deleted_by = gerant.name;
+        this.db.put(boutique).catch((err) => console.log(err)); 
+      }else{
+        //boutique.created_by = '';
+        boutique.deleted_by = '';
+        this.db.put(boutique).catch((err) => console.log(err)); 
+      }
+       
+    });
+    //this.db.put(boutique).catch((err) => console.log(err));
     //this.db.remove(boutique).catch((err) => console.log(err));
   }
 
   deleteDoc(doc){
     let dat = new Date();
     doc.deleted_at = dat.toJSON();
-    doc.deleted_by = '';
+    //doc.deleted_by = '';
     //doc._deleted = true;
     doc.supprime = true;
+    doc.annuler_at = '';
+    doc.annuler_by = '';
+    doc.annuler = false;
+    this.storage.get('gerant').then((gerant) => {
+      if(gerant){
+        //doc.created_by = gerant.name;
+        doc.deleted_by = gerant.name;
+        this.db.put(doc).catch((err) => console.log(err)); 
+      }else{
+       // doc.created_by = '';
+        doc.deleted_by = '';
+        this.db.put(doc).catch((err) => console.log(err)); 
+      }
+       
+    });
     //this.db.remove(doc).catch((err) => console.log(err));
-    this.db.put(doc).catch((err) => console.log(err));
+    //this.db.put(doc).catch((err) => console.log(err));
+  }
+
+  annulerDoc(doc){
+    let dat = new Date();
+    doc.annuler_at = dat.toJSON();
+    //doc.annuler_by = '';
+    //doc._deleted = true;
+    doc.annuler = true;
+    doc.deleted_at = '';
+    doc.deleted_by = '';
+    //doc._deleted = true;
+    doc.supprime = false;
+    this.storage.get('gerant').then((gerant) => {
+      if(gerant){
+        //doc.created_by = gerant.name;
+        doc.annuler_by = gerant.name;
+        this.db.put(doc).catch((err) => console.log(err)); 
+      }else{
+       // doc.created_by = '';
+        doc.annuler_by = '';
+        this.db.put(doc).catch((err) => console.log(err)); 
+      }
+       
+    });
+    //this.db.remove(doc).catch((err) => console.log(err));
+    //this.db.put(doc).catch((err) => console.log(err));
   }
 
   handleChange(change){

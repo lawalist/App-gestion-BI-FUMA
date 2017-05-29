@@ -84,4 +84,10 @@ page-login {
           background-color:  map-get($colors, secondary);
           border: 1px solid map-get($colors, secondary);
       }*/
+
+      .connect-later {
+        color: map-get($colors, fuma_primary);
+        text-decoration: underline;
+        background: none;
+      }
 }

@@ -6,6 +6,8 @@ import { global } from '../../../global-variables/variable';
 
 import { GestionBoutique } from '../../../providers/gestion-boutique';
 import { Geolocation } from 'ionic-native';
+import { TranslateService } from '@ngx-translate/core';
+
 
 
 
@@ -28,15 +30,16 @@ export class AjouterBoutiquePage {
   latitude: any = '';
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public storage: Storage, public toastCtl: ToastController, public gestionService: GestionBoutique) {
-    
+  constructor(public translate: TranslateService, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public storage: Storage, public toastCtl: ToastController, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     let d: Date = new Date();
     let s = this.createDate(d.getDate(), d.getMonth(), d.getFullYear());
     this.status = ['En construction', 'Fermée', 'Ouverte'];
     this.types = ['Fixe', 'Mobile', 'Point de vente'];
 
     this.boutique = this.formBuilder.group({
-      _id: ['', Validators.required],
+      _id: [''],
+      id: ['', Validators.required],
       nom: [''],
       type: ['boutique'],
       type_boutique: ['', Validators.required],
@@ -59,7 +62,8 @@ export class AjouterBoutiquePage {
     });
   }
 
-  ionViewDidLoad() {
+  ionViewWillEnter() {
+    this.translate.use(global.langue);
     //console.log('ionViewDidLoad AjouterBoutiquePage');
   }
 
@@ -97,8 +101,9 @@ export class AjouterBoutiquePage {
     //boutiq.produits = [];
     //boutiq.ventes = [];
     //boutiq.achats = [];
+    boutiq._id = 'boutique:'+boutiq.id;
     this.gestionService.createBoutique(boutiq);
-    this.storage.set('boutique_id', boutiq._id);
+    this.storage.set('boutique_id', boutiq.id);
     let toast = this.toastCtl.create({
       message: 'Boutique sauvegardée...',
       duration: 3000,

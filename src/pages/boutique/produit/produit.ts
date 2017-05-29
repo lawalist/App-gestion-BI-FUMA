@@ -4,6 +4,8 @@ import { AjouterProduitPage } from './ajouter-produit/ajouter-produit';
 import { DetailProduitPage } from './detail-produit/detail-produit';
 import { GestionBoutique } from '../../../providers/gestion-boutique';
 import { Storage } from '@ionic/storage';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../global-variables/variable';
 
 /*
   Generated class for the Produit page.
@@ -22,9 +24,12 @@ export class ProduitPage {
   last_id : string = '0';
   boutique_id: any;
 
-  constructor(public gestionService: GestionBoutique, public alertCtl: AlertController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams) {}
+  constructor(public translate: TranslateService, public gestionService: GestionBoutique, public alertCtl: AlertController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams) {
+    this.translate.setDefaultLang(global.langue);
+  }
 
   ionViewWillEnter(){
+    this.translate.use(global.langue);
     this.storage.get('boutique_id').then((id) => {
        this.gestionService.getPlageDocs(id + ':produit', id+ ':produit:\ufff0').then((produits) => {
          this.produits = produits;//.reverse();

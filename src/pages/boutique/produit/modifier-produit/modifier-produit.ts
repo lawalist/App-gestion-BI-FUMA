@@ -3,6 +3,8 @@ import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { Validators, FormBuilder } from '@angular/forms';
 import { GestionBoutique } from '../../../../providers/gestion-boutique'
 import { Storage } from '@ionic/storage';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../../global-variables/variable';
 
 /*
   Generated class for the ModifierProduit page.
@@ -24,7 +26,8 @@ export class ModifierProduitPage {
   unites: any = [];
   typeProduits: any = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public storage: Storage, public toastCtl: ToastController, public gestionService: GestionBoutique) {
+  constructor(public translate: TranslateService, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public storage: Storage, public toastCtl: ToastController, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     this.ancienProduit = this.navParams.get('produit');
     let boutique_id = this.navParams.data.boutique_id;
     this.code_prod = this.ancienProduit.code_produit;
@@ -51,6 +54,7 @@ export class ModifierProduitPage {
       type: [this.ancienProduit.type],
       type_produit: [this.ancienProduit.type_produit, Validators.required],
       code_produit: [this.ancienProduit.code_produit],
+      date: [this.ancienProduit.date, Validators.required],
       nom_produit: [this.ancienProduit.nom_produit, Validators.required],
       quantite: [this.ancienProduit.quantite, Validators.required],
       unite_mesure: [this.ancienProduit.unite_mesure, Validators.required],
@@ -63,7 +67,8 @@ export class ModifierProduitPage {
     });
   }
 
-  ionViewDidLoad() {
+  ionViewWillEnter() {
+    this.translate.use(global.langue);
     //console.log('ionViewDidLoad ModifierProduitPage');
   }
 

@@ -7,53 +7,81 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>détail boutique</ion-title>
+    <ion-title>{{'DETAILBOUTIQUE' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <h2>Information boutique  </h2>
+  
   <div *ngIf="boutique_id">
-    <p><strong>ID boutique: </strong> {{boutique._id}} </p>
-    <p><strong>Type boutique: </strong> {{boutique.type_boutique}} </p>
-    <p><strong>Nom boutique: </strong> {{boutique.nom}} </p>
-    <p><strong>Région: </strong> {{boutique.region}} </p>
-    <p><strong>Departement: </strong> {{boutique.departement}} </p>
-    <p><strong>Commune: </strong> {{boutique.commune}} </p>
-    <p><strong>Village: </strong> {{boutique.village}} </p>
-    <p><strong>Longitude: </strong> {{boutique.longitude}} </p>
-    <p><strong>Latitude: </strong> {{boutique.latitude}} </p>
-    <div *ngIf="gerant">
-      <p><strong>Nom gérant: </strong> {{gerant.nom}} </p>
-      <!--p> <strong>Prénom gérant: </strong> {{gerant.prenom}} </p-->
-    </div>
-    <div *ngIf="!gerant" >
-      <p class="error-box"> <strong>Pas de gérant en fonction!</strong></p>
-    </div>
-    <p><strong>Nom de l'OP: </strong> {{boutique.nom_op}} </p>
-    <p><strong>Nom de l'Union: </strong> {{boutique.nom_union}} </p>
-    <p><strong>Nom de la fédération: </strong> {{boutique.nom_federation}} </p>
-    <p><strong>nombre du membre de l'OP: </strong> {{boutique.nb_membre_op_proprietaire}} </p>
-    <p><strong>Nombre de femmes: </strong> {{boutique.nb_femme}} </p>
-    <p><strong>Date création: </strong> {{boutique.date_creation | date: 'dd-MM-yyyy'}} </p>
-    <p><strong>Solde caisse: </strong> {{boutique.solde_caisse}}F</p>
-    <p><strong>Solde trésor: </strong> {{boutique.solde_tresor}}F</p>
-    <p><strong>Status: </strong> {{boutique.status}} </p>
+    <ion-card>
+      <ion-card-header>
+        <h2><strong>{{'INFOBOUTIQUE' | translate}}</strong></h2>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>{{'IDBOUTIQUE' | translate}}: </strong> {{boutique.id}} </p>
+        <p><strong>{{'TYPEBOUTIQUE' | translate}}: </strong> {{boutique.type_boutique}} </p>
+        <p><strong>{{'NOMBOUTIQUE' | translate}}: </strong> {{boutique.nom}} </p>
+        <p><strong>{{'REGION' | translate}}: </strong> {{boutique.region}} </p>
+        <p><strong>{{'DEPARTEMENT' | translate}}: </strong> {{boutique.departement}} </p>
+        <p><strong>{{'COMMUNE' | translate}}: </strong> {{boutique.commune}} </p>
+        <p><strong>{{'VILLAGE' | translate}}: </strong> {{boutique.village}} </p>
+        <p><strong>{{'LONGITUDE' | translate}}: </strong> {{boutique.longitude}} </p>
+        <p><strong>{{'LATITUDE' | translate}}: </strong> {{boutique.latitude}} </p>
+        <!--div *ngIf="gerant">
+          <p><strong>{{'NOMGERANT' | translate}}: </strong> {{gerant.nom}} </p>
+          <!--p> <strong>Prénom gérant: </strong> {{gerant.prenom}} </p>
+        </div>
+        <div *ngIf="!gerant" >
+          <p class="error-box"> <strong>{{'PASGERANTENFONCTION'}}</strong></p>
+        </div-->
+        <p><strong>{{'NOMLOP' | translate}}: </strong> {{boutique.nom_op}} </p>
+        <p><strong>{{'NOMLUNION' | translate}}: </strong> {{boutique.nom_union}} </p>
+        <p><strong>{{'NOMDELAFEDERATION' | translate}}: </strong> {{boutique.nom_federation}} </p>
+        <p><strong>{{'NOMBREMEMBREOP' | translate}}: </strong> {{boutique.nb_membre_op_proprietaire}} </p>
+        <p><strong>{{'NOMBREFEMME' | translate}}: </strong> {{boutique.nb_femme}} </p>
+        <p><strong>{{'DATECREATION' | translate}}: </strong> {{boutique.date_creation | date: 'dd-MM-yyyy'}} </p>
+        <p><strong>{{'SOLDECAISSE' | translate}}: </strong> {{boutique.solde_caisse}}F</p>
+        <p><strong>{{'SOLDETRESOR' | translate}}: </strong> {{boutique.solde_tresor}}F</p>
+        <p><strong>{{'STATUS' | translate}}: </strong> {{boutique.status}} </p>
+      </ion-card-content>
+    </ion-card>
 
-    <ion-row>
+
+  <ion-card *ngIf = "tacheAdmin == 'admin'">
+    <ion-card-header>
+      <strong>Info sup</strong>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <h2><strong>created_at:</strong> {{boutique.created_at}}</h2>
+          <h2><strong>created_by:</strong> {{boutique.by}}</h2>
+          <h2><strong>updatet_at:</strong> {{boutique.updatet_at}}</h2>
+          <h2><strong>updatet_by:</strong> {{boutique.updatet_by}}</h2>
+          <h2><strong>deleted_at:</strong> {{boutique.deleted_at}}</h2>
+          <h2><strong>deleted_by:</strong> {{boutique.deleted_by}}</h2>
+          <h2><strong>annuler_at:</strong> {{boutique.annuler_at}}</h2>
+          <h2><strong>annuler_bye:</strong> {{boutique.annuler_by}}</h2>
+          <!--h2><strong>prenom:</strong> {{operation.prenom_gerant}}</h2-->
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+    <!--ion-row>
       <ion-col>
         <ion-card (click)="gestionGerants()">
           <ion-item style="text-align: center">Gérants
           </ion-item>
-        </ion-card>
-        <ion-card (click)="gestionProduits()">
-          <ion-item style="text-align: center">Produits
+        </ion-card--> 
+        <ion-card (click)="gestionTypeProduits()">
+          <ion-item style="text-align: center; background-color: #7DCE82; background: #7DCE82;">{{'TYPESPRODUITS' | translate}}
           </ion-item>
         </ion-card>
-      </ion-col>
-    </ion-row>
+      <!--/ion-col>
+    </ion-row-->
   </div>
 
   <ion-fab bottom right *ngIf="boutique_id">
@@ -61,7 +89,7 @@
   </ion-fab>
 
   <div *ngIf="!boutique_id">
-    <div class="message">La boutique n'est pas défini</div>
+    <div class="message">{{'BOUTIQUENOMDEFINIE' | translate}}</div>
     <ion-fab bottom right >
       <button ion-fab mini (click)="ajouter()" *ngIf="!boutique_id"><ion-icon name="add"></ion-icon></button>
     </ion-fab>

@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>config-boutique</ion-title>
+    <ion-title>{{'CONFIG-BOUTIQUE' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -18,51 +18,51 @@
     <img src="assets/img/fuma_gaskiya_logo.png">
   </div>
 
-  <p>Application de FUMA Gaskiya pour le suivi et la gestion des boutiques d'entrants</p>
+  <p>{{'CONFBOUTIQUE' | translate}}</p>
   <br>
-  <p>Cet assistance de configuration de votre boutique</p>
+  <p>{{'ASSISTANT' | translate}}</p>
   <br>
-  <h3 *ngIf="infoBoutique"><ion-icon name="arrow-forward" *ngIf="postion == 'info-boutique'"></ion-icon><ion-icon name="checkmark" *ngIf="postion != 'info-boutique'"> </ion-icon> Informations boutique</h3>
-  <h3 *ngIf="gerant"><ion-icon name="arrow-forward" *ngIf="postion == 'gerant'"></ion-icon><ion-icon name="checkmark" *ngIf="postion != 'gerant'"></ion-icon> Gestion gérants</h3>
-  <h3 *ngIf="typeProduit"><ion-icon name="arrow-forward" *ngIf="postion == 'type-produit'"></ion-icon><ion-icon name="checkmark" *ngIf="postion != 'type-produit'"></ion-icon> Gestion types de produits</h3>
-  <h3 *ngIf="produit"><ion-icon name="arrow-forward" *ngIf="postion == 'produit'"></ion-icon><ion-icon name="checkmark" *ngIf="postion != 'produit'"></ion-icon> Gestion produits</h3>
-  <h3 *ngIf="ok"><ion-icon name="done-all" *ngIf="postion == 'ok'"></ion-icon> Configuration terminée avec succès</h3>
+  <h3 *ngIf="infoBoutique"><ion-icon name="arrow-forward" *ngIf="postion == 'info-boutique'"></ion-icon><ion-icon name="checkmark" *ngIf="postion != 'info-boutique'"> </ion-icon> {{'INFOSBOUTIQUE' | translate}}</h3>
+  <!--h3 *ngIf="gerant"><ion-icon name="arrow-forward" *ngIf="postion == 'gerant'"></ion-icon><ion-icon name="checkmark" *ngIf="postion != 'gerant'"></ion-icon> Gestion gérants</h3-->
+  <h3 *ngIf="typeProduit"><ion-icon name="arrow-forward" *ngIf="postion == 'type-produit'"></ion-icon><ion-icon name="checkmark" *ngIf="postion != 'type-produit'"></ion-icon> {{'GESTIONTYPEDEPRODUIT' | translate}}</h3>
+  <h3 *ngIf="produit"><ion-icon name="arrow-forward" *ngIf="postion == 'produit'"></ion-icon><ion-icon name="checkmark" *ngIf="postion != 'produit'"></ion-icon> {{'GESTIONPRODUIT' | translate}}</h3>
+  <h3 *ngIf="ok"><ion-icon name="done-all" *ngIf="postion == 'ok'"></ion-icon> {{'CONFTERMINER' | translate}}</h3>
   <br>
 
   <ion-card (click)="changerBoutique()" *ngIf="postion == 'info-boutique'">
-    <ion-item style="text-align: center">Charger boutique
+    <ion-item style="text-align: center">{{'CHRARGERBOUTIQUE' | translate}}
     </ion-item>
   </ion-card>
 
   <ion-card (click)="ajouterBoutique()" *ngIf="postion == 'info-boutique'">
-    <ion-item style="text-align: center">Ajouter boutique
+    <ion-item style="text-align: center">{{'AJOUTERBOUTIQUE' | translate}}
     </ion-item>
   </ion-card>
 
   <ion-card (click)="concerver()" *ngIf="postion == 'info-boutique' && concerve">
-    <ion-item style="text-align: center">Concerver la configuration
+    <ion-item style="text-align: center">{{'CONCERVERCONFIG' | translate}}
     </ion-item>
   </ion-card>
 
-  <ion-card (click)="gestionGerants()" *ngIf="postion == 'gerant'">
+  <!--ion-card (click)="gestionGerants()" *ngIf="postion == 'gerant'">
     <ion-item style="text-align: center">Gestion gérants
     </ion-item>
-  </ion-card>
+  </ion-card-->
 
   <ion-card (click)="gestionTypeProduits()" *ngIf="postion == 'type-produit'">
-    <ion-item style="text-align: center">Gestion types produits
+    <ion-item style="text-align: center">{{'GESTIONTYPEPRODUIT' | translate}}
     </ion-item>
   </ion-card>
 
   <ion-card (click)="gestionProduits()" *ngIf="postion == 'produit'">
-    <ion-item style="text-align: center">Gestion produits
+    <ion-item style="text-align: center">{{'GESTIONPRODUIT' | translate}}
     </ion-item>
   </ion-card>
 
   <ion-card (click)="ignorer()" *ngIf="ignore">
-    <ion-item style="text-align: center">Ignorer
+    <ion-item style="text-align: center">{{'IGNORER' | translate}}
     </ion-item>
   </ion-card>
 
-  <button ion-button type="submit" color="fuma-green-dark" (click)="lancer()" block *ngIf="postion == 'ok'">Lancez vous</button>
+  <button ion-button type="submit" color="fuma-green-dark" (click)="lancer()" block *ngIf="postion == 'ok'">{{'LANCERVOUS' | translate}}</button>
 </ion-content>

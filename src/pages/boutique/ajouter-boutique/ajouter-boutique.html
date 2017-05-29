@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>ajouter-boutique</ion-title>
+    <ion-title>{{'AJOUTERBOUTIQUE' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -16,113 +16,113 @@
   <form [formGroup]="boutique" (ngSubmit) = "ajouter()">
 
     <ion-item>
-      <ion-label floating>ID Boutique <span class="error-box">*</span></ion-label>
-      <ion-input type="text" formControlName="_id"></ion-input>
+      <ion-label floating>{{'IDBOUTIQUE' | translate}} <span class="error-box">*</span></ion-label>
+      <ion-input type="text" formControlName="id"></ion-input>
     </ion-item>
-    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['_id'].hasError('_id') && boutique.controls['_id'].touched">* L'ID de la boutique est obligatoir!</div>
+    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['id'].hasError('id') && boutique.controls['id'].touched">* {{'IDBOUTIQUEOBLIGATOIRE' | translate}}</div>
 
     <ion-item>
-      <ion-label floating>Type boutique <span class="error-box">*</span></ion-label>
+      <ion-label floating>{{'TYPEBOUTIQUE' | translate}} <span class="error-box">*</span></ion-label>
       <ion-select formControlName="type_boutique" cancelText="Annuler" okText="Ok">
-        <ion-option value="" selected disabled>Selectionnez un type</ion-option>
+        <ion-option value="" selected disabled>{{'SELECTIONNEZUNTYPE' | translate}}</ion-option>
         <ion-option *ngFor="let type of types" [value]=type >{{type}}</ion-option>
       </ion-select>
     </ion-item>
-    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['type_boutique'].hasError('required') && boutique.controls['type_boutique'].touched">* Le type de la boutique est obligatoir!</div>
+    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['type_boutique'].hasError('required') && boutique.controls['type_boutique'].touched">* {{'TYPEBOUTIQUEOBLIGATOIRE' | translate}} </div>
 
     <ion-item>
-      <ion-label floating>Nom boutique</ion-label>
+      <ion-label floating>{{'NOMBOUTIQUE' | translate}}</ion-label>
       <ion-input type="text" formControlName="nom"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Region</ion-label>
+      <ion-label floating>{{'REGION' | translate}}</ion-label>
       <ion-input type="text" formControlName="region"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Département</ion-label>
+      <ion-label floating>{{'DEPARTEMENT' | translate}}</ion-label>
       <ion-input type="text" formControlName="departement"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Commune</ion-label>
+      <ion-label floating>{{'COMMUNE' | translate}}</ion-label>
       <ion-input type="text" formControlName="commune"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Village</ion-label>
+      <ion-label floating>{{'VILLAGE' | translate}}</ion-label>
       <ion-input type="text" formControlName="village"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Longitude</ion-label>
+      <ion-label floating>{{'LONGITUDE' | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="longitude" formControlName="longitude"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Latitude</ion-label>
+      <ion-label floating>{{'LATITUDE' | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="latitude" formControlName="latitude"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Nom OP</ion-label>
+      <ion-label floating>{{'NOMOP' | translate}}</ion-label>
       <ion-input type="text" formControlName="nom_op"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Si affiliée, nom de l'Union</ion-label>
+      <ion-label floating>{{'NOMUNION' | translate}}</ion-label>
       <ion-input type="text" formControlName="nom_union"></ion-input>
     </ion-item>
 
 
     <ion-item>
-      <ion-label floating>Si affiliée, nom de la Fédération</ion-label>
+      <ion-label floating>{{'NOMFEDERATION' | translate}}</ion-label>
       <ion-input type="text" formControlName="nom_federation"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Nombre de membres de l'OP propriétaire</ion-label>
+      <ion-label floating>{{'NOMBDREOPPREPRIETAIRE' | translate}}</ion-label>
       <ion-input type="text" formControlName="nb_membre_op_proprietaire"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Nombre de femmes</ion-label>
+      <ion-label floating>{{'NOMBREFEMME' | translate}}</ion-label>
       <ion-input type="number" formControlName="nb_femme"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label floating>Status de la boutique <span class="error-box">*</span></ion-label>
+      <ion-label floating>{{'STATUSBOUTIQUE' | translate}} <span class="error-box">*</span></ion-label>
       <ion-select formControlName="status" cancelText="Annuler" okText="Ok">
-        <ion-option value="" selected disabled>Selectionnez un status</ion-option>
+        <ion-option value="" selected disabled>{{'SELECTIONNEZSTATUS' | translate}}</ion-option>
         <ion-option *ngFor="let stat of status" [value]=stat >{{stat}}</ion-option>
       </ion-select>
     </ion-item>
-    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['status'].hasError('required') && boutique.controls['status'].touched">* Le status de la boutique est obligatoir!</div>
+    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['status'].hasError('required') && boutique.controls['status'].touched">* {{'SATITUSBOUTIQUEOBLIGATOIRE' | translate}}</div>
 
 
     <ion-item>
-      <ion-label floating>Date création <span class="error-box">*</span></ion-label>
+      <ion-label floating>{{'DATECREATION' | translate}} <span class="error-box">*</span></ion-label>
       <ion-datetime displayFormat="DD/MM/YYYY" formControlName="date_creation" cancelText="Annuler" doneText="Valider"></ion-datetime>
     </ion-item>
-    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['date_creation'].hasError('required') && boutique.controls['date_creation'].touched">* La date de création de la boutique est obligatoir!</div>
+    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['date_creation'].hasError('required') && boutique.controls['date_creation'].touched">* {{'DATECREATIONOBLIGATOIRE' | translate}}</div>
 
     <ion-item>
-      <ion-label floating>Solde caisse (FCFA) <span class="error-box">*</span></ion-label>
+      <ion-label floating>{{'SOLDECAISSEFCFA' | translate}} <span class="error-box">*</span></ion-label>
       <ion-input type="number" formControlName="solde_caisse"></ion-input>
     </ion-item>
-    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['solde_caisse'].hasError('required') && boutique.controls['solde_caisse'].touched">* Le solde en caisse de la boutique est obligatoir!</div>
+    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['solde_caisse'].hasError('required') && boutique.controls['solde_caisse'].touched">* {{'SOLDECAISSEOBLIGATOIRE' | translate}}</div>
 
     <ion-item>
-      <ion-label floating>Solde trésor (FCFA) <span class="error-box">*</span></ion-label>
+      <ion-label floating>{{'SOLDETRESORFCFA' | translate}} <span class="error-box">*</span></ion-label>
       <ion-input type="number" formControlName="solde_tresor"></ion-input>
     </ion-item>
-    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['solde_tresor'].hasError('required') && boutique.controls['solde_tresor'].touched">* Le solde au trésor de la boutique est obligatoir!</div>
+    <div style="padding-left: 15px;" class="error-box" *ngIf="boutique.controls['solde_tresor'].hasError('required') && boutique.controls['solde_tresor'].touched">* {{'SOLDETRESOROBLIGATOIRE' | translate}}</div>
 
     <br>
-    <button ion-button type="submit" color="secondary" [disabled]="!boutique.valid" block>Sauvegarder</button>
+    <button ion-button type="submit" color="secondary" [disabled]="!boutique.valid" block>{{'SAUVEGARDER' | translate}}</button>
   </form>
-  <button ion-button color="primary" block (click)="annuler()">Annuler</button>
+  <button ion-button color="primary" block (click)="annuler()">{{'ANNULER' | translate}}</button>
 
   <ion-fab bottom right>
     <button ion-fab mini (click)="getPosition()"><ion-icon name="cloud-upload"></ion-icon></button>

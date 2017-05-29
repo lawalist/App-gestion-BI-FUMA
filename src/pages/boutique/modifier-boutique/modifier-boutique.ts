@@ -3,6 +3,8 @@ import { NavController, NavParams, ToastController, LoadingController } from 'io
 import { Validators, FormBuilder } from '@angular/forms';
 import { GestionBoutique } from '../../../providers/gestion-boutique';
 import { Geolocation } from 'ionic-native';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../global-variables/variable';
 
 
 /*
@@ -26,18 +28,19 @@ export class ModifierBoutiquePage {
   longitude: any ='';
   latitude: any = '';
 
-  constructor(public loading: LoadingController, public toastCtl: ToastController, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
-
+  constructor(public translate: TranslateService, public loading: LoadingController, public toastCtl: ToastController, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     this.ancienBoutique = this.navParams.get('boutique');
     this.status = ['En construction', 'Fermée', 'Ouverte'];
     this.types = ['Fixe', 'Mobile', 'Point de vente'];
     this.selectedStatus = this.ancienBoutique.status;
-    this.selectedType = this.ancienBoutique.type;
+    this.selectedType = this.ancienBoutique.type_boutique;
     this.longitude = this.ancienBoutique.longitude;
-    this.latitude = this.ancienBoutique.latitude;
+    this.latitude = this.ancienBoutique.latitude; 
 
     this.boutique = this.formBuilder.group({
       _id: [this.ancienBoutique._id],
+       id: [this.ancienBoutique.id],
       _rev: [this.ancienBoutique._rev],
       nom: [this.ancienBoutique.nom],
       type: [this.ancienBoutique.type],
@@ -62,7 +65,8 @@ export class ModifierBoutiquePage {
     });
   }
 
-  ionViewDidLoad() {
+  ionViewWillEnter() {
+    this.translate.use(global.langue);
     //console.log('ionViewDidLoad ModifierBoutiquePage');
   }
 

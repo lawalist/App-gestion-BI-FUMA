@@ -7,7 +7,7 @@
 <ion-header >
 
   <ion-navbar color="fuma_primary">
-    <ion-title>rapport</ion-title>
+    <ion-title>{{'RAPPORT' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -18,95 +18,95 @@
       <ion-row>
         <ion-col width-50>
           <ion-item>
-            <ion-label floating>Type opération</ion-label>
+            <ion-label floating>{{'TYPEOPERATION' | translate}}</ion-label>
             <ion-select [(ngModel)] = "selectedTypeOperation" (ionChange)="filterTypeOperation()" cancelText="Annuler" okText="Ok" >
-              <ion-option value="VENTE">VENTE</ion-option>
-              <ion-option value="DEPENSE">DEPENSE</ion-option>
-              <ion-option value="DECAISSEMENT">DECAISSEMENT</ion-option>
-              <ion-option value="LOCATION" >LOCATION</ion-option>
-              <ion-option value="RETOUR LOCATION">RETOUR LOCATION</ion-option>
-              <ion-option value="SUBVENTION">SUBVENTION</ion-option>
-              <ion-option value="TOUS">TOUS</ion-option>
+              <ion-option value="VENTE">{{'VENTE' | translate}}</ion-option>
+              <ion-option value="DEPENSE">{{'DEPENSE' | translate}}</ion-option>
+              <ion-option value="DECAISSEMENT">{{'DECAISSEMENT' | translate}}</ion-option>
+              <ion-option value="LOCATION" >{{'LOCATION' | translate}}</ion-option>
+              <ion-option value="RETOUR LOCATION">{{'RETOURLOCATION' | translate}}</ion-option>
+              <ion-option value="SUBVENTION">{{'SUBVENTION' | translate}}</ion-option>
+              <ion-option value="TOUS">{{'TOUS' | translate}}</ion-option>
             </ion-select>
           </ion-item>
         </ion-col>
         <ion-col width-50>
           <ion-item>
-            <ion-label floating>Type rapport</ion-label>
+            <ion-label floating>{{'TYPERAPPORT' | translate}}</ion-label>
             <ion-select [(ngModel)] = "selectedTypeRapport" (ionChange)="filterTypeRapport()" cancelText="Annuler" okText="Ok" >
-              <ion-option value="Jour">Journalier</ion-option>
-              <ion-option value="Semaine">Hebdomadaire (7j)</ion-option>
-              <ion-option value="Moi">Mensuel (30)</ion-option>
-              <ion-option value="Annee" >Annuel (366)</ion-option>
-              <ion-option value="Tous">Tous</ion-option>
+              <ion-option value="Jour">{{'JOURNALIER' | translate}}</ion-option>
+              <ion-option value="Semaine">{{'HEBDOMADAIRE' | translate}}</ion-option>
+              <ion-option value="Moi">{{'MENSUEL' | translate}}</ion-option>
+              <ion-option value="Annee" >{{'ANNUEL' | translate}}</ion-option>
+              <ion-option value="Tous">{{'TOUS' | translate}}</ion-option>
             </ion-select>
           </ion-item>
         </ion-col>
       </ion-row>
       <ion-item>
-        <ion-searchbar placeholder="Recherche produit" [showCancelButton]="shouldShowCancel" [(ngModel)]="rh" (ionInput)="getItems($event)"></ion-searchbar>
+        <ion-searchbar placeholder="{{'RECHERCHEPRODUIT' | translate}}" [showCancelButton]="shouldShowCancel" [(ngModel)]="rh" (ionInput)="getItems($event)"></ion-searchbar>
       </ion-item>
     </ion-list>
   </ion-card>
 
   <ion-card>
     <ion-item *ngIf="!operations.length > 0">
-        <div class="message">Le rapport est vide !</div>
+        <div class="message">{{'RAPPORTVIDE' | translate}}</div>
     </ion-item>
   </ion-card>
 
 <ion-card style="height: 60%" *ngIf="operations.length > 0">
   <ion-scroll scrollX="true" scrollY="true" id="rapport"> 
     <ion-card-header>
-    <h2 style="width: 100%"><strong style="width: 100%">Rapport {{rapport}}</strong></h2>
+    <h2 style="width: 100%"><strong style="width: 100%">{{'RAPPORT' | translate}} {{rapport}}</strong></h2>
   </ion-card-header> 
     <table class="table table-striped table-bordered">
       <thead>
         <tr>
         <th width-25>
-          <strong>Date</strong>
+          <strong>{{'DATE' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Type opération</strong>
+          <strong>{{'TYPEOPERATION' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Type de produit</strong>
+          <strong>{{'TYPEPRODUIT' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Nom de produit</strong>
+          <strong>{{'NOMPRODUIT' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Unité</strong>
+          <strong>{{'UNITE' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Prix unitaire</strong>
+          <strong>{{'PRIXUNITAIRE' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Quantité</strong>
+          <strong>{{'QUANTITE' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Montant total</strong>
+          <strong>{{'MONTANTTOTAL' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Caisse</strong>
+          <strong>{{'CAISSE' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Tresorier</strong>
+          <strong>{{'TRESORIER' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Nom du Client</strong>
+          <strong>{{'NOMCLIENT' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Sexe</strong>
+          <strong>{{'SEX' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Village</strong> 
+          <strong>{{'VILLAGE' | translate}}</strong> 
         </th>
         <th width-25>
-          <strong>OP</strong>
+          <strong>{{'OP' | translate}}</strong>
         </th>
         <th width-25>
-          <strong>Obsertion</strong> 
+          <strong>{{'OBSERVATION' | translate}}</strong> 
         </th>
         </tr>
       </thead>

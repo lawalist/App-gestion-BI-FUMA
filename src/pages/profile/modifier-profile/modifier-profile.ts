@@ -3,6 +3,8 @@ import { NavController, NavParams, LoadingController } from 'ionic-angular';
 import { Validators, FormBuilder } from '@angular/forms';
 import { GestionBoutique } from '../../../providers/gestion-boutique';
 import { ProfilePage } from '../../profile/profile';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../global-variables/variable';
 
 /*
   Generated class for the ModifierProfile page.
@@ -18,7 +20,8 @@ export class ModifierProfilePage {
   user: any;
   registerForm: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public loadingCtl: LoadingController, public gestionService: GestionBoutique) {
+  constructor(public translate: TranslateService, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public loadingCtl: LoadingController, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     this.user = this.navParams.data.user;
 
     this.registerForm = this.formBuilder.group({
@@ -32,7 +35,8 @@ export class ModifierProfilePage {
     })
   }
 
-  ionViewDidLoad() {
+  ionViewWillEnter() {
+    this.translate.use(global.langue);
     console.log('ionViewDidLoad ModifierProfilePage');
   }
 
@@ -53,7 +57,7 @@ export class ModifierProfilePage {
       
     });
   }
-
+ 
 
 
 }

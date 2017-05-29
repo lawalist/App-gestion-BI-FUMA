@@ -3,6 +3,8 @@ import { NavController, NavParams, ToastController, AlertController } from 'ioni
 import { Validators, FormBuilder } from '@angular/forms';
 import { GestionBoutique } from '../../../../providers/gestion-boutique';
 import { Storage } from '@ionic/storage';
+import { TranslateService } from '@ngx-translate/core';
+import { global } from '../../../../global-variables/variable';
 
 /*
   Generated class for the AjouterTypeProduit page.
@@ -18,15 +20,16 @@ export class AjouterTypeProduitPage {
 
    typeProduit: any;
  
-  constructor(public alertCtl: AlertController, public toastCtl: ToastController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
-
+  constructor(public translate: TranslateService, public alertCtl: AlertController, public toastCtl: ToastController, public storage: Storage, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, public gestionService: GestionBoutique) {
+    this.translate.setDefaultLang(global.langue);
     this.typeProduit = this.formBuilder.group({
       nom: ['', Validators.required],
     });
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad AjouterTypeProduitPage');
+  ionViewWillEnter() {
+    this.translate.use(global.langue);
+    //console.log('ionViewDidLoad AjouterTypeProduitPage');
   }
 
   ajouter(){

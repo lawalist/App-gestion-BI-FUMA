@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="fuma_primary">
-    <ion-title>detail-produit</ion-title>
+    <ion-title>{{'DETAIL-PRODUIT' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -16,32 +16,56 @@
 <ion-content padding>
   <ion-card>
     <ion-card-header>
-      Détail produit numéro: {{produit.code_produit}}
+      {{'DETAILPRODUITNUMERO' | translate}}: {{produit.code_produit}}
     </ion-card-header>
     <ion-card-content>
       <ion-list>
         <ion-item-sliding>
           <ion-item>
-            <h2><strong>Type produit:</strong> {{produit.type_produit}}</h2>
-            <h2><strong>Nom produit:</strong> {{produit.nom_produit}}</h2>
-            <h2><strong>Quantité:</strong> {{produit.quantite}}</h2>
+            <h2><strong>{{'TYPEPRODUIT' | translate}}:</strong> {{produit.type_produit}}</h2>
+            <h2><strong>{{'DATE' | translate}}:</strong> {{produit.date | date: 'dd-MM-yyyy'}}</h2>
+            <h2><strong>{{'NOMPRODUIT' | translate}}:</strong> {{produit.nom_produit}}</h2>
+            <h2><strong>{{'UNITEMESURE' | translate}}:</strong> {{produit.unite_mesure}}</h2>
+            <h2><strong>{{'QUANTITE' | translate}}:</strong> {{produit.quantite}} {{produit.unite_mesure}}</h2>
             <!--h2><strong>Type produit:</strong> {{achat.type_produit}} </h2-->
-            <h2><strong>Prix unitaire:</strong> {{produit.prix}} </h2>
+            <h2><strong>{{'PRIXUNITAIRE' | translate}}:</strong> {{produit.prix}} </h2>
           </ion-item>
           <ion-item-options side="left">
             <button ion-button color="primary" (click)="editer(produit, boutique_id)">
               <ion-icon name="create"></ion-icon>
-              Editer
+              {{'EDITER' | translate}}
             </button>
           </ion-item-options>
 
           <ion-item-options side="right">
             <button ion-button color="danger" (click)="supprimer(produit)">
               <ion-icon name="trash"></ion-icon>
-              Supprimer
+              {{'SUPPRIMER' | translate}}
             </button>
           </ion-item-options>
         </ion-item-sliding>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+
+  <ion-card *ngIf = "tacheAdmin == 'admin'">
+    <ion-card-header>
+      <strong>Info sup</strong>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <h2><strong>created_at:</strong> {{produit.created_at}}</h2>
+          <h2><strong>created_by:</strong> {{produit.by}}</h2>
+          <h2><strong>updatet_at:</strong> {{produit.updatet_at}}</h2>
+          <h2><strong>updatet_by:</strong> {{produit.updatet_by}}</h2>
+          <h2><strong>deleted_at:</strong> {{produit.deleted_at}}</h2>
+          <h2><strong>deleted_by:</strong> {{produit.deleted_by}}</h2>
+          <h2><strong>annuler_at:</strong> {{produit.annuler_at}}</h2>
+          <h2><strong>annuler_bye:</strong> {{produit.annuler_by}}</h2>
+          <!--h2><strong>prenom:</strong> {{operation.prenom_gerant}}</h2-->
+        </ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>

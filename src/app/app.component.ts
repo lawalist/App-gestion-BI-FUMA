@@ -41,7 +41,13 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
-      Splashscreen.hide();
+      Splashscreen.hide(); 
+    });
+
+    this.storage.get('langue').then((langue) => {
+      if(langue){
+        global.langue = langue;
+      }
     });
 
     this.storage.get('ip_serveur').then((ip) => {
@@ -53,37 +59,61 @@ export class MyApp {
 
     });
 
-    this.storage.get('boutique_id').then((id) => {
-      if(id){
-        this.gestionService.getBoutiqueById(id).then((res) => {
-          loading.dismissAll();
-          //global.id_boutique = id;
-          this.rootPage = TabsPage; 
-        }, error => {
-            loading.dismissAll();
-            let alert = this.alertCtl.create({
-              title: 'Erreur',
-              message: 'La boutique d\'ID: <strong>'+id+'</strong> n\'existe pas.<br> Veuillez conracter l\'administrateur',
-              buttons: [
-                {
-                  text: 'ok',
-                  handler: () => {
-                    this.storage.remove('boutique_id');
-                    this.rootPage = AccueilPage
-                    //this.ionViewDidEnter();
-                  }
-                }
-              ]
+    this.storage.get('tache').then((tache) => {
+      if(tache){
+        this.storage.get('boutique_id').then((id) => {
+              if(id){
+                this.gestionService.getBoutiqueById(id).then((res) => {
+                  global.boutique = res;
+                });
+                
+              }
             });
-
-          alert.present()
-        });
+        loading.dismissAll();
+        //global.id_boutique = id;
+        global.configOK = true;
+        this.rootPage = TabsPage; 
         
       }else{
-        loading.dismissAll();
-        this.rootPage = AccueilPage;
+            this.storage.get('boutique_id').then((id) => {
+              if(id){
+                this.gestionService.getBoutiqueById(id).then((res) => {
+                  loading.dismissAll();
+                  //global.id_boutique = id;
+                  global.configOK = true;
+                  this.rootPage = TabsPage; 
+                  
+                }, error => {
+                    loading.dismissAll();
+                    let alert = this.alertCtl.create({
+                      title: 'Erreur',
+                      message: 'La boutique d\'ID: <strong>'+id+'</strong> n\'existe pas.<br> Veuillez conracter l\'administrateur',
+                      buttons: [
+                        {
+                          text: 'ok',
+                          handler: () => {
+                            this.storage.remove('boutique_id');
+                            global.configOK = false;
+                            this.rootPage = AccueilPage
+                            //this.ionViewDidEnter();
+                          }
+                        }
+                      ]
+                    });
+
+                  alert.present()
+                });
+                
+              }else{
+                loading.dismissAll();
+                global.configOK = false;
+                this.rootPage = AccueilPage;
+              }
+            });
       }
-    });
+    })
+
+
 
     this.setPage();
     //loading.dismissAll();
